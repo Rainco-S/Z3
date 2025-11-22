@@ -145,7 +145,7 @@ class Channel:
 
     # additional channels in [10]
     @staticmethod
-    def Filterp(p): # DIY
+    def Filterp(p):
         # is p a list or a function? I use list here
         def FilterpInstance(nodes, bound, i = 0, j = 0):
             assert len(nodes) == 2
@@ -162,7 +162,7 @@ class Channel:
         return FilterpInstance
     
     @staticmethod
-    def Producerp(p):  # p is a list
+    def Producerp(p): # p is a list
         def ProducerpInstance(nodes, bound):
             assert len(nodes) == 2
             constraints = []
@@ -174,7 +174,7 @@ class Channel:
         return ProducerpInstance
 
     @staticmethod
-    def AsynSpout(nodes, bound):  # DIY
+    def AsynSpout(nodes, bound):
         # two nodes are both sinks
         def Asyn(a, b, i=0, j=0):
             if i == bound or j == bound:
@@ -192,8 +192,7 @@ class Channel:
         return Conjunction(constraints)
 
     @staticmethod
-    def AsynDrain(nodes, bound):  # DIY
-        # two nodes are both sources
+    def AsynDrain(nodes, bound):
         def Asyn(a, b, i=0, j=0):
             if i == bound or j == bound:
                 return True
@@ -210,9 +209,9 @@ class Channel:
         return Conjunction(constraints)
 
     @staticmethod
-    def SyncSpout(nodes, bound):  # DIY
-        # two nodes are both sinks
+    def SyncSpout(nodes, bound):
         assert len(nodes) == 2
+        
         constraints = []
         for i in range(bound):
             constraints += [nodes[0]['time'][i] == nodes[1]['time'][i]]
@@ -323,7 +322,7 @@ class Channel:
 
     # Timer
     @staticmethod
-    def Timert(t): # DIY
+    def Timert(t):
         def TimertInstance(nodes, bound):
             assert len(nodes) == 2
             constraints = []
@@ -336,7 +335,7 @@ class Channel:
         return TimertInstance
     
     @staticmethod
-    def OFFTimert(t): # DIY
+    def OFFTimert(t):
         def OFFTimertInstance(nodes, bound, i = 0, j = 0):
             assert len(nodes) == 2
             if i >= bound:
@@ -360,7 +359,7 @@ class Channel:
         return OFFTimertInstance
         
     @staticmethod
-    def RSTTimert(t): # DIY
+    def RSTTimert(t):
         def RSTTimertInstance(nodes, bound, i = 0, j = 0):
             assert len(nodes) == 2
             if i >= bound:
@@ -383,7 +382,7 @@ class Channel:
         return RSTTimertInstance
     
     @staticmethod
-    def EXPTimert(t): # DIY
+    def EXPTimert(t):
         def EXPTimertInstance(nodes, bound, i = 0):
             assert len(nodes) == 2
             if i >= bound:
@@ -405,18 +404,10 @@ class Channel:
             )
         return EXPTimertInstance
     
-
-    # Merge, Replicate, Flow 
-    # 我发现Replicate和Flow是完全无用的
+    # Merge
     @staticmethod
     def Merger(nodes, bound, idx_1 = 0, idx_2 = 0):
-        '''
-        Two source ends and one merged sink end.
-        Merge data from two sources in chronological order into a single sink.
-        '''
         assert len(nodes) == 3
-        # Termination condition: The total number of operations at both source ends reaches the bound
-        # (merging completed), return true.
         if bound == idx_1 + idx_2:
             return True
         constraints_1 = []
@@ -433,7 +424,7 @@ class Channel:
                   And(Conjunction(constraints_2), Channel.Merger(nodes, bound, idx_1, idx_2 + 1)))
 
     @staticmethod
-    def MultiMerger(nodes, bound): # DIY
+    def MultiMerger(nodes, bound):
         assert len(nodes) >= 3
         def MultiMergerInstance(Index = [0 for _ in range(len(nodes) - 1)]):
             if bound == sum(Index):
@@ -450,24 +441,3 @@ class Channel:
             return Disjunction([And(Conjunction(constraints[i]), MultiMergerInstance(Index[:i] + [Index[i] + 1] + Index[i + 1:])) for i in range(len(nodes) - 1)])
         return MultiMergerInstance()
 
-    # @staticmethod
-    # def Replicator(nodes, bound):  # DIY 0 --> 1, 2
-    #     assert len(nodes) == 3
-    #     constraints = []
-    #     for i in range(bound):
-    #         constraints += [nodes[0]['data'][i] == nodes[1]['data'][i]]
-    #         constraints += [nodes[0]['time'][i] == nodes[1]['time'][i]]
-    #         constraints += [nodes[0]['data'][i] == nodes[2]['data'][i]]
-    #         constraints += [nodes[0]['time'][i] == nodes[2]['time'][i]]
-    #     return Conjunction(constraints)
-
-    # @staticmethod
-    # def FlowThrough(nodes, bound):  # DIY 0 --> _ --> 2
-    #     assert len(nodes) == 2
-    #     constraints = []
-    #     for i in range(bound):
-    #         constraints += [nodes[0]['data'][i] == nodes[1]['data'][i]]
-    #         constraints += [nodes[0]['time'][i] == nodes[1]['time'][i]]
-
-
-    #     return Conjunction(constraints)
