@@ -2,13 +2,10 @@ from channel import *
 
 import sys
 
-class Connector:  # Used to represent the connection relationships between system components.
-    # Create an empty list to store the connection information between channels and nodes.
+class Connector:
     def __init__(self):
         self.channels = []
 
-    # Method for adding channel-node connection relationships
-    # Parameters: channel is the channel type name, *nodes is a list of node names
     def connect(self, channel, *nodes):
         self.channels += [(channel, nodes)]
         return self
@@ -19,7 +16,6 @@ class Connector:  # Used to represent the connection relationships between syste
 
         solver = Solver()
 
-        # generate variables for the refinement
         for chan in self.channels:
             for nd in chan[1]:
                 if nd not in nodes:
@@ -35,15 +31,13 @@ class Connector:  # Used to represent the connection relationships between syste
                     for i in range(bound):
                         solver.add(Or(nodes[nd]['data'][i] < 10, nodes[nd]['data'][i] > 20))
 
-            # generate constraint for channels
             channelDecl = eval('Channel.' + chan[0])
             paramnodes = list(map(lambda name: nodes[name], chan[1]))
             solver.add(channelDecl(paramnodes, bound))
 
-        # deal with the abstraction
         foralls = []
-        absGlobalConstr = None  # Abstract global constraints(conjunction of channel constraints)
-        absTimeConstr = None  # Abstract time constraints(conjunction of node time increment constraints)
+        absGlobalConstr = None
+        absTimeConstr = None
 
         for chan in abstraction.channels:
             for nd in chan[1]:
@@ -72,7 +66,6 @@ class Connector:  # Used to represent the connection relationships between syste
                     else:
                         absTimeConstr = And(absTimeConstr, currNodeConstr)
 
-            # generate constraint for channels
             channelDecl = eval('Channel.' + chan[0])
             paramnodes = list(map(lambda name: nodes[name], chan[1]))
 
@@ -87,7 +80,6 @@ class Connector:  # Used to represent the connection relationships between syste
         else:
             absGlobalConstr = Not(absGlobalConstr)
 
-        # deal with the constraints of abstraction
         if foralls != []:
             solver.add(ForAll(foralls, absGlobalConstr))
         else:
@@ -104,7 +96,6 @@ class Connector:  # Used to represent the connection relationships between syste
         if 'smt2' in sys.argv:
             print(solver.to_smt2())
 
-        # Return based on solving result:
         if str(result) == 'sat':
             return False, solver.model(), solver.to_smt2()
         else:
