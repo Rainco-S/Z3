@@ -26,13 +26,9 @@ def Disjunction(constraints):
 
 
 class Channel:
+    # basic channels in [9]
     @staticmethod
     def Sync(nodes, bound):
-        '''
-        Sync(synchronous channel): one source end and one sink end.
-        The pair of I/O operations on its two ends can only succeed simultaneously.
-        :param bound: The maximum number of operations to be processed at both ends of the channel.
-        '''
         assert len(nodes) == 2
         constraints = []
         for i in range(bound):
@@ -43,12 +39,6 @@ class Channel:
 
     @staticmethod
     def Fifo1(nodes, bound):
-        '''
-        FIFOn(asynchronous channel): one source end and one sink end, a bounded buffer with capacity n.
-        It can accept ndata items from its source end before emitting data on its sink end.
-        The accepted data items are kept in the internal buffer, and dispensed to the sink end in FIFO order.
-        Especially, the FIFO1 channel is an instance of FIFOn where the buffer capacity is 1.
-        '''
         assert len(nodes) == 2
         constraints = []
         for i in range(bound):
@@ -63,10 +53,6 @@ class Channel:
     @staticmethod
     def Fifo1e(e):
         def Fifo1eInstance(nodes, bound):
-            '''
-            Return a function that generates an instance of Fifo1e channel (specific variant FIFO channel).
-            There is a data e in the initial buffer-e needed to be the first data transformed.
-            '''
             assert len(nodes) == 2
             constraints = []
             constraints += [nodes[1]['data'][0] == 1]  # The first data of the sink end is fixed at 1.
@@ -81,11 +67,6 @@ class Channel:
         
     @staticmethod
     def SyncDrain(nodes, bound):
-        '''
-        SyncDrain(synchronous channel): two source ends.
-        The pair of input operations on its two ends can only succeed simultaneously.
-        All data items written to this channel are lost.
-        '''
         assert len(nodes) == 2
         constraints = []
         for i in range(bound):
@@ -95,13 +76,6 @@ class Channel:
     
     @staticmethod
     def LossySync(nodes, bound, idx = 0, num = 0):
-        '''
-        LossySync(synchronous channel): one source end and one sink end.
-        The source end always accepts all data items.
-        If there is no matching output operation on the sink end of the channel at the time that a data item is accepted,
-        then the data item is lost; otherwise, the channel transfers the data item as a Sync channel,
-        and the output operation at the sink end succeeds.
-        '''
         assert len(nodes) == 2
         # Termination condition: If the sink side has processed all data (num=bound),
         # or the source side has no more data (idx=bound), return true (constraint satisfied).
@@ -121,6 +95,7 @@ class Channel:
         return Or(And(Conjunction(constraints_0), Channel.LossySync(nodes, bound, idx + 1, num)),
                   And(Conjunction(constraints_1), Channel.LossySync(nodes, bound, idx + 1, num + 1)))
 
+    # additional channels in [10]
     @staticmethod
     def Producerp(p):  # p is a list
         def ProducerpInstance(nodes, bound):
@@ -176,6 +151,188 @@ class Channel:
             constraints += [nodes[0]['time'][i] == nodes[1]['time'][i]]
         return Conjunction(constraints)
 
+    # Probabilistic
+    @staticmethod
+    def CptSync(nodes, p, bound):
+        assert len(nodes) == 2
+        assert 0 <= p <= 1
+        constraints = []
+        corrupted_data = 10
+
+        for i in range(bound):
+            q = uniform(0, 1)
+            constraints += [nodes[0]['time'][i] == nodes[1]['time'][i]]
+
+            if q > p:
+                constraints.append(nodes[1]['data'][i] == nodes[0]['data'][i])
+            else:
+                constraints.append(nodes[1]['data'][i] == corrupted_data)
+
+        return Conjunction(constraints)
+
+    @staticmethod
+    def RdmSync(nodes, bound):
+        assert len(nodes) == 2
+        constraints = []
+
+        for i in range(bound):
+            p = randint(0, 1)
+            constraints += [nodes[0]['time'][i] == nodes[1]['time'][i]]
+
+            if p > 0.5:
+                constraints.append(nodes[1]['data'][i] == 1)
+            else:
+                constraints.append(nodes[1]['data'][i] == 0)
+
+        return Conjunction(constraints)
+
+    @staticmethod
+    def ProbLossy(nodes, p, bound, idx=0, num=0):
+        assert len(nodes) == 2
+        assert 0 <= p <= 1
+
+        q = uniform(0, 1)
+        if bound == num or bound == idx:
+            return True
+
+        constraints_0 = []
+        constraints_1 = []
+
+        constraints_0 += [nodes[0]['time'][idx] != nodes[1]['time'][num]]
+
+        constraints_1 += [nodes[0]['data'][idx] == nodes[1]['data'][num]]
+        constraints_1 += [nodes[0]['time'][idx] == nodes[1]['time'][num]]
+
+        time_mismatch = And(
+            Conjunction(constraints_0),
+            Channel.ProbLossy(nodes, p, bound, idx + 1, num)
+        )
+
+        loss_prob = And(
+            Conjunction([nodes[0]['time'][idx] == nodes[1]['time'][num]]),
+            Channel.ProbLossy(nodes, p, bound, idx + 1, num)
+        )
+
+        success = And(
+            Conjunction(constraints_1),
+            Channel.ProbLossy(nodes, p, bound, idx + 1, num + 1)
+        )
+
+        branch_time_match = Or(
+            And(q <= p, loss_prob),
+            And(q > p, success)
+        )
+
+        return Or(time_mismatch, branch_time_match)
+
+    @staticmethod
+    def FtyFIFO1(nodes, p, bound):
+        assert len(nodes) == 2
+        assert 0 <= p <= 1
+
+        r = 0
+        constraints = []
+        for i in range(bound):
+            q = uniform(0, 1)
+            constraints += [nodes[0]['time'][i] < nodes[1]['time'][i]]
+            if r == 0:
+                if q > p:
+                    r = 1
+                    constraints += [nodes[0]['data'][i] == nodes[1]['data'][i]]
+            else:
+                constraints += [nodes[0]['time'][i] > nodes[1]['time'][i - 1]]
+                if q <= p:
+                    r = 0
+                else:
+                    constraints += [nodes[0]['data'][i] == nodes[1]['data'][i]]
+
+        return Conjunction(constraints)
+
+    # Timer
+    @staticmethod
+    def Timert(t): # DIY
+        def TimertInstance(nodes, bound):
+            assert len(nodes) == 2
+            constraints = []
+            for i in range(bound):
+                constraints += [nodes[1]['data'][i] == 'TIMEOUT']
+                constraints += [nodes[0]['time'][i] + t == nodes[1]['time'][i]]
+                if i < bound - 1:
+                    constraints += [nodes[0]['time'][i + 1] >= nodes[1]['time'][i] + t]
+            return Conjunction(constraints)
+        return TimertInstance
+    
+    @staticmethod
+    def OFFTimert(t): # DIY
+        def OFFTimertInstance(nodes, bound, i = 0, j = 0):
+            assert len(nodes) == 2
+            if i >= bound:
+                return True
+            if j >= bound:
+                return True
+            constraints_0, constraints_1 = [], []
+
+            constraints_0 += [nodes[0]['data'][i + 1] == 'OFF']
+            constraints_0 += [nodes[0]['time'][i] + t > nodes[1]['time'][i + 1]]
+            # 需要加 i < bound - 1吗？不加的话，如果i == bound - 1自动不满足data[i + 1] == 'OFF'
+
+            constraints_1 += [nodes[1]['data'][j] == 'TIMEOUT']
+            constraints_1 += [nodes[1]['time'][j] == nodes[0]['time'][i] + t]
+            constraints_1 += [Or(nodes[0]['time'][i] + t <= nodes[1]['time'][i + 1], i == bound - 1)]
+
+            return Or(
+                And(Conjunction(constraints_0), OFFTimertInstance(nodes, bound, i + 2, j)),
+                And(Conjunction(constraints_1), OFFTimertInstance(nodes, bound, i + 1, j + 1))
+            )
+        return OFFTimertInstance
+        
+    @staticmethod
+    def RSTTimert(t): # DIY
+        def RSTTimertInstance(nodes, bound, i = 0, j = 0):
+            assert len(nodes) == 2
+            if i >= bound:
+                return True
+            if j >= bound:
+                return True
+            constraints_0, constraints_1 = [], []
+
+            constraints_0 += [nodes[0]['data'][i + 1] == 'RESET']
+            constraints_0 += [nodes[0]['time'][i] + t > nodes[1]['time'][i + 1]]
+
+            constraints_1 += [nodes[1]['data'][j] == 'TIMEOUT']
+            constraints_1 += [nodes[1]['time'][j] == nodes[0]['time'][i] + t]
+            constraints_1 += [Or(nodes[0]['time'][i] + t <= nodes[1]['time'][i + 1], i == bound - 1)]
+
+            return Or(
+                And(Conjunction(constraints_0), RSTTimertInstance(nodes, bound, i + 1, j)),
+                And(Conjunction(constraints_1), RSTTimertInstance(nodes, bound, i + 1, j + 1))
+            )
+        return RSTTimertInstance
+    
+    @staticmethod
+    def EXPTimert(t): # DIY
+        def EXPTimertInstance(nodes, bound, i = 0):
+            assert len(nodes) == 2
+            if i >= bound:
+                return True
+            constraints_0, constraints_1 = [], []
+
+            constraints_0 += [nodes[0]['data'][i + 1] == 'EXPIRE']
+            constraints_0 += [nodes[1]['data'][i] == 'TIMEOUT']
+            constraints_0 += [nodes[0]['time'][i] + t > nodes[1]['time'][i + 1]]
+            constraints_0 += [nodes[1]['time'][i] == nodes[0]['time'][i + 1]]
+
+            constraints_1 += [nodes[1]['data'][i] == 'TIMEOUT']
+            constraints_1 += [nodes[1]['time'][i] == nodes[0]['time'][i] + t]
+            constraints_1 += [Or(nodes[0]['time'][i] + t <= nodes[1]['time'][i + 1], i == bound - 1)]
+
+            return Or(
+                And(Conjunction(constraints_0), EXPTimertInstance(nodes, bound, i + 1)),
+                And(Conjunction(constraints_1), EXPTimertInstance(nodes, bound, i + 1))
+            )
+        return EXPTimertInstance
+    
+    # Merge, Replicate, Flow
     @staticmethod
     def Merger(nodes, bound, idx_1 = 0, idx_2 = 0):
         '''
@@ -218,4 +375,5 @@ class Channel:
         for i in range(bound):
             constraints += [nodes[0]['data'][i] == nodes[1]['data'][i]]
             constraints += [nodes[0]['time'][i] == nodes[1]['time'][i]]
+
         return Conjunction(constraints)
