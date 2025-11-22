@@ -107,6 +107,7 @@ class Channel:
         constraints_0, constraints_1 = [], []
 
         constraints_0 += [nodes[0]['time'][i] != nodes[1]['time'][j]] # drop
+        
         constraints_1 += [nodes[0]['data'][i] == nodes[1]['data'][j]] # transmit
         constraints_1 += [nodes[0]['time'][i] == nodes[1]['time'][j]]
         
@@ -123,7 +124,7 @@ class Channel:
             if i == bound:
                 return True
             constraints = []
-            if nodes[0]['data'][i] in range(p):
+            if nodes[0]['data'][i] in p:
                 constraints += [nodes[0]['data'][i] == nodes[1]['data'][j]]
                 constraints += [nodes[0]['time'][i] == nodes[1]['time'][j]]
                 return And(Conjunction(constraints), FilterpInstance(nodes, bound, i + 1, j + 1))
@@ -138,7 +139,7 @@ class Channel:
             assert len(nodes) == 2
             constraints = []
             for i in range(bound):
-                constraints += [Disjunction([nodes[1]['data'][i] == v for v in range(p)])]
+                constraints += [Disjunction([nodes[1]['data'][i] == v for v in p])]
                 constraints += [nodes[0]['time'][i] == nodes[1]['time'][i]]
             return Conjunction(constraints)
         return ProducerpInstance
