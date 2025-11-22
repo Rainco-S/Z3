@@ -1,4 +1,5 @@
 from z3 import *
+from random import *
 
 def Conjunction(constraints):
     assert len(constraints) > 0
@@ -11,7 +12,6 @@ def Conjunction(constraints):
             result = And(result, c)
 
     return result
-
 
 def Disjunction(constraints):
     assert len(constraints) > 0
@@ -26,6 +26,14 @@ def Disjunction(constraints):
 
 
 class Channel:
+    # Special data
+    CORRUPTED = 10
+    TIMEOUT = 11
+    OFF = 12
+    RESET = 13
+    EXPIRE = 14
+
+
     # basic channels in [9]
     @staticmethod
     def Sync(nodes, bound):
@@ -49,6 +57,22 @@ class Channel:
                 constraints += [ nodes[0]['time'][i] > nodes[1]['time'][i-1] ]
 
         return Conjunction(constraints)
+    
+    @staticmethod
+    def Fifon(n): # DIY
+        def FifonInstance(nodes, bound):
+            assert len(nodes) == 2
+            constraints = []
+            for i in range(bound):
+                constraints += [nodes[0]['data'][i] == nodes[1]['data'][i]]
+                constraints += [nodes[0]['time'][i] < nodes[1]['time'][i]]
+            if i >= 1:
+                constraints += [nodes[1]['time'][i] > nodes[1]['time'][i - 1]] # FIFO
+            if i >= n:
+                constraints += [nodes[0]['time'][i] > nodes[1]['time'][i - n]] # buffer size n
+
+            return Conjunction(constraints)
+        return FifonInstance
 
     @staticmethod
     def Fifo1e(e):
@@ -64,7 +88,32 @@ class Channel:
 
             return Conjunction(constraints)
         return Fifo1eInstance
-        
+    
+    @staticmethod
+    def Fifone(n, e): # DIY, e is a list of length <= n
+        def FifoneInstance(nodes, bound):
+            assert len(nodes) == 2
+            assert len(e) <= n
+            constraints = []
+            if bound >= len(e):
+                for i in range(len(e)):
+                    constraints += [nodes[1]['data'][i] == e[i]]
+                for i in range(bound - len(e)):
+                    constraints += [nodes[0]['data'][i] == nodes[1]['data'][i + len(e)]]
+                    constraints += [nodes[0]['time'][i] < nodes[1]['time'][i + len(e)]]
+                for i in range(bound - len(e) + 1):
+                    constraints += [nodes[1]['time'][i] > nodes[1]['time'][i + len(e) - 1]]
+                for i in range(n - len(e), bound):
+                    constraints += [nodes[0]['time'][i] > nodes[1]['time'][i + len(e) - n]]
+            else:
+                for i in range(bound):
+                    constraints += [nodes[1]['data'][i] == e[i]]
+                    if i >= 1:
+                        constraints += [nodes[1]['time'][i] > nodes[1]['time'][i - 1]]
+
+            return Conjunction(constraints)
+        return FifoneInstance
+    
     @staticmethod
     def SyncDrain(nodes, bound):
         assert len(nodes) == 2
@@ -95,7 +144,25 @@ class Channel:
         return Or(And(Conjunction(constraints_0), Channel.LossySync(nodes, bound, idx + 1, num)),
                   And(Conjunction(constraints_1), Channel.LossySync(nodes, bound, idx + 1, num + 1)))
 
+
     # additional channels in [10]
+    @staticmethod
+    def Filterp(p): # DIY
+        # is p a list or a function? I use list here
+        def FilterpInstance(nodes, bound, i = 0, j = 0):
+            assert len(nodes) == 2
+            if i == bound:
+                return True
+            constraints = []
+            if nodes[0]['data'][i] in p:
+                constraints += [nodes[0]['data'][i] == nodes[1]['data'][j]]
+                constraints += [nodes[0]['time'][i] == nodes[1]['time'][j]]
+                return And(Conjunction(constraints), FilterpInstance(nodes, bound, i + 1, j + 1))
+            else:
+                return FilterpInstance(nodes, bound, i + 1, j)
+        
+        return FilterpInstance
+    
     @staticmethod
     def Producerp(p):  # p is a list
         def ProducerpInstance(nodes, bound):
@@ -104,8 +171,8 @@ class Channel:
             for i in range(bound):
                 constraints += [Disjunction([nodes[1]['data'][i] == v for v in p])]
                 constraints += [nodes[0]['time'][i] == nodes[1]['time'][i]]
-            return Conjunction(constraints)
 
+            return Conjunction(constraints)
         return ProducerpInstance
 
     @staticmethod
@@ -123,6 +190,7 @@ class Channel:
         constraints = []
         constraints += [len(nodes[0]['time']) == len(nodes[1]['time'])]
         constraints += [Asyn(nodes[0]['time'], nodes[1]['time'])]
+        
         return Conjunction(constraints)
 
     @staticmethod
@@ -140,6 +208,7 @@ class Channel:
         constraints = []
         constraints += [len(nodes[0]['time']) == len(nodes[1]['time'])]
         constraints += [Asyn(nodes[0]['time'], nodes[1]['time'])]
+        
         return Conjunction(constraints)
 
     @staticmethod
@@ -149,7 +218,9 @@ class Channel:
         constraints = []
         for i in range(bound):
             constraints += [nodes[0]['time'][i] == nodes[1]['time'][i]]
+        
         return Conjunction(constraints)
+
 
     # Probabilistic
     @staticmethod
@@ -157,7 +228,6 @@ class Channel:
         assert len(nodes) == 2
         assert 0 <= p <= 1
         constraints = []
-        corrupted_data = 10
 
         for i in range(bound):
             q = uniform(0, 1)
@@ -166,7 +236,7 @@ class Channel:
             if q > p:
                 constraints.append(nodes[1]['data'][i] == nodes[0]['data'][i])
             else:
-                constraints.append(nodes[1]['data'][i] == corrupted_data)
+                constraints.append(nodes[1]['data'][i] == Channel.CORRUPTED)
 
         return Conjunction(constraints)
 
@@ -248,6 +318,7 @@ class Channel:
 
         return Conjunction(constraints)
 
+
     # Timer
     @staticmethod
     def Timert(t): # DIY
@@ -255,7 +326,7 @@ class Channel:
             assert len(nodes) == 2
             constraints = []
             for i in range(bound):
-                constraints += [nodes[1]['data'][i] == 'TIMEOUT']
+                constraints += [nodes[1]['data'][i] == Channel.TIMEOUT]
                 constraints += [nodes[0]['time'][i] + t == nodes[1]['time'][i]]
                 if i < bound - 1:
                     constraints += [nodes[0]['time'][i + 1] >= nodes[1]['time'][i] + t]
@@ -272,11 +343,11 @@ class Channel:
                 return True
             constraints_0, constraints_1 = [], []
 
-            constraints_0 += [nodes[0]['data'][i + 1] == 'OFF']
+            constraints_0 += [nodes[0]['data'][i + 1] == Channel.OFF]
             constraints_0 += [nodes[0]['time'][i] + t > nodes[1]['time'][i + 1]]
-            # 需要加 i < bound - 1吗？不加的话，如果i == bound - 1自动不满足data[i + 1] == 'OFF'
+            # 需要加 i < bound - 1吗？不加的话，如果i == bound - 1自动不满足data[i + 1] == Channel.OFF
 
-            constraints_1 += [nodes[1]['data'][j] == 'TIMEOUT']
+            constraints_1 += [nodes[1]['data'][j] == Channel.TIMEOUT]
             constraints_1 += [nodes[1]['time'][j] == nodes[0]['time'][i] + t]
             constraints_1 += [Or(nodes[0]['time'][i] + t <= nodes[1]['time'][i + 1], i == bound - 1)]
 
@@ -296,10 +367,10 @@ class Channel:
                 return True
             constraints_0, constraints_1 = [], []
 
-            constraints_0 += [nodes[0]['data'][i + 1] == 'RESET']
+            constraints_0 += [nodes[0]['data'][i + 1] == Channel.RESET]
             constraints_0 += [nodes[0]['time'][i] + t > nodes[1]['time'][i + 1]]
 
-            constraints_1 += [nodes[1]['data'][j] == 'TIMEOUT']
+            constraints_1 += [nodes[1]['data'][j] == Channel.TIMEOUT]
             constraints_1 += [nodes[1]['time'][j] == nodes[0]['time'][i] + t]
             constraints_1 += [Or(nodes[0]['time'][i] + t <= nodes[1]['time'][i + 1], i == bound - 1)]
 
@@ -317,12 +388,12 @@ class Channel:
                 return True
             constraints_0, constraints_1 = [], []
 
-            constraints_0 += [nodes[0]['data'][i + 1] == 'EXPIRE']
-            constraints_0 += [nodes[1]['data'][i] == 'TIMEOUT']
+            constraints_0 += [nodes[0]['data'][i + 1] == Channel.EXPIRE]
+            constraints_0 += [nodes[1]['data'][i] == Channel.TIMEOUT]
             constraints_0 += [nodes[0]['time'][i] + t > nodes[1]['time'][i + 1]]
             constraints_0 += [nodes[1]['time'][i] == nodes[0]['time'][i + 1]]
 
-            constraints_1 += [nodes[1]['data'][i] == 'TIMEOUT']
+            constraints_1 += [nodes[1]['data'][i] == Channel.TIMEOUT]
             constraints_1 += [nodes[1]['time'][i] == nodes[0]['time'][i] + t]
             constraints_1 += [Or(nodes[0]['time'][i] + t <= nodes[1]['time'][i + 1], i == bound - 1)]
 
@@ -332,7 +403,9 @@ class Channel:
             )
         return EXPTimertInstance
     
-    # Merge, Replicate, Flow
+
+    # Merge, Replicate, Flow 
+    # 我发现Replicate和Flow是完全无用的
     @staticmethod
     def Merger(nodes, bound, idx_1 = 0, idx_2 = 0):
         '''
@@ -358,22 +431,40 @@ class Channel:
                   And(Conjunction(constraints_2), Channel.Merger(nodes, bound, idx_1, idx_2 + 1)))
 
     @staticmethod
-    def Replicator(nodes, bound):  # DIY 0 --> 1, 2
-        assert len(nodes) == 3
-        constraints = []
-        for i in range(bound):
-            constraints += [nodes[0]['data'][i] == nodes[1]['data'][i]]
-            constraints += [nodes[0]['time'][i] == nodes[1]['time'][i]]
-            constraints += [nodes[0]['data'][i] == nodes[2]['data'][i]]
-            constraints += [nodes[0]['time'][i] == nodes[2]['time'][i]]
-        return Conjunction(constraints)
+    def MultiMerger(nodes, bound): # DIY
+        assert len(nodes) >= 3
+        def MultiMergerInstance(Index = [0 for _ in range(len(nodes) - 1)]):
+            if bound == sum(Index):
+                return True
+            constraints = []
+            for i in range(len(nodes) - 1):
+                temp = []
+                temp += [nodes[i]['data'][Index[i]] == nodes[-1]['data'][sum(Index)]]
+                temp += [nodes[i]['time'][Index[i]] == nodes[-1]['time'][sum(Index)]]
+                for j in range(len(nodes) - 1):
+                    if j != i:
+                        temp += [nodes[i]['time'][Index[i]] < nodes[j]['time'][Index[j]]]
+                constraints += [temp]
+            return Disjunction([And(Conjunction(constraints[i]), MultiMergerInstance(Index[:i] + [Index[i] + 1] + Index[i + 1:])) for i in range(len(nodes) - 1)])
+        return MultiMergerInstance()
 
-    @staticmethod
-    def FlowThrough(nodes, bound):  # DIY 0 --> _ --> 2
-        assert len(nodes) == 2
-        constraints = []
-        for i in range(bound):
-            constraints += [nodes[0]['data'][i] == nodes[1]['data'][i]]
-            constraints += [nodes[0]['time'][i] == nodes[1]['time'][i]]
+    # @staticmethod
+    # def Replicator(nodes, bound):  # DIY 0 --> 1, 2
+    #     assert len(nodes) == 3
+    #     constraints = []
+    #     for i in range(bound):
+    #         constraints += [nodes[0]['data'][i] == nodes[1]['data'][i]]
+    #         constraints += [nodes[0]['time'][i] == nodes[1]['time'][i]]
+    #         constraints += [nodes[0]['data'][i] == nodes[2]['data'][i]]
+    #         constraints += [nodes[0]['time'][i] == nodes[2]['time'][i]]
+    #     return Conjunction(constraints)
 
-        return Conjunction(constraints)
+    # @staticmethod
+    # def FlowThrough(nodes, bound):  # DIY 0 --> _ --> 2
+    #     assert len(nodes) == 2
+    #     constraints = []
+    #     for i in range(bound):
+    #         constraints += [nodes[0]['data'][i] == nodes[1]['data'][i]]
+    #         constraints += [nodes[0]['time'][i] == nodes[1]['time'][i]]
+
+    #     return Conjunction(constraints)
