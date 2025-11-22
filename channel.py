@@ -126,8 +126,6 @@ class Channel:
     @staticmethod
     def LossySync(nodes, bound, idx = 0, num = 0):
         assert len(nodes) == 2
-        # Termination condition: If the sink side has processed all data (num=bound),
-        # or the source side has no more data (idx=bound), return true (constraint satisfied).
         if bound == num:
             return True
         if bound == idx:
@@ -221,24 +219,25 @@ class Channel:
         
         return Conjunction(constraints)
 
-
     # Probabilistic
     @staticmethod
-    def CptSync(nodes, p, bound):
-        assert len(nodes) == 2
-        assert 0 <= p <= 1
-        constraints = []
-
-        for i in range(bound):
-            q = uniform(0, 1)
-            constraints += [nodes[0]['time'][i] == nodes[1]['time'][i]]
-
-            if q > p:
-                constraints.append(nodes[1]['data'][i] == nodes[0]['data'][i])
-            else:
-                constraints.append(nodes[1]['data'][i] == Channel.CORRUPTED)
-
-        return Conjunction(constraints)
+    def CptSync(p):
+        def CptSyncInstance(nodes, bound):
+            assert len(nodes) == 2
+            assert 0 <= p <= 1
+            constraints = []
+    
+            for i in range(bound):
+                q = uniform(0, 1)
+                constraints += [nodes[0]['time'][i] == nodes[1]['time'][i]]
+    
+                if q > p:
+                    constraints.append(nodes[1]['data'][i] == nodes[0]['data'][i])
+                else:
+                    constraints.append(nodes[1]['data'][i] == Channel.CORRUPTED)
+    
+            return Conjunction(constraints)
+        return CptSyncInstance
 
     @staticmethod
     def RdmSync(nodes, bound):
@@ -257,67 +256,70 @@ class Channel:
         return Conjunction(constraints)
 
     @staticmethod
-    def ProbLossy(nodes, p, bound, idx=0, num=0):
-        assert len(nodes) == 2
-        assert 0 <= p <= 1
-
-        q = uniform(0, 1)
-        if bound == num or bound == idx:
-            return True
-
-        constraints_0 = []
-        constraints_1 = []
-
-        constraints_0 += [nodes[0]['time'][idx] != nodes[1]['time'][num]]
-
-        constraints_1 += [nodes[0]['data'][idx] == nodes[1]['data'][num]]
-        constraints_1 += [nodes[0]['time'][idx] == nodes[1]['time'][num]]
-
-        time_mismatch = And(
-            Conjunction(constraints_0),
-            Channel.ProbLossy(nodes, p, bound, idx + 1, num)
-        )
-
-        loss_prob = And(
-            Conjunction([nodes[0]['time'][idx] == nodes[1]['time'][num]]),
-            Channel.ProbLossy(nodes, p, bound, idx + 1, num)
-        )
-
-        success = And(
-            Conjunction(constraints_1),
-            Channel.ProbLossy(nodes, p, bound, idx + 1, num + 1)
-        )
-
-        branch_time_match = Or(
-            And(q <= p, loss_prob),
-            And(q > p, success)
-        )
-
-        return Or(time_mismatch, branch_time_match)
+    def ProbLossy(p):
+        def ProbLossyInstance(nodes, bound, idx=0, num=0):
+            assert len(nodes) == 2
+            assert 0 <= p <= 1
+    
+            q = uniform(0, 1)
+            if bound == num or bound == idx:
+                return True
+    
+            constraints_0 = []
+            constraints_1 = []
+    
+            constraints_0 += [nodes[0]['time'][idx] != nodes[1]['time'][num]]
+    
+            constraints_1 += [nodes[0]['data'][idx] == nodes[1]['data'][num]]
+            constraints_1 += [nodes[0]['time'][idx] == nodes[1]['time'][num]]
+    
+            time_mismatch = And(
+                Conjunction(constraints_0),
+                Channel.ProbLossy(nodes, p, bound, idx + 1, num)
+            )
+    
+            loss_prob = And(
+                Conjunction([nodes[0]['time'][idx] == nodes[1]['time'][num]]),
+                Channel.ProbLossy(nodes, p, bound, idx + 1, num)
+            )
+    
+            success = And(
+                Conjunction(constraints_1),
+                Channel.ProbLossy(nodes, p, bound, idx + 1, num + 1)
+            )
+    
+            branch_time_match = Or(
+                And(q <= p, loss_prob),
+                And(q > p, success)
+            )
+    
+            return Or(time_mismatch, branch_time_match)
+        return ProbLossyInstance
 
     @staticmethod
-    def FtyFIFO1(nodes, p, bound):
-        assert len(nodes) == 2
-        assert 0 <= p <= 1
-
-        r = 0
-        constraints = []
-        for i in range(bound):
-            q = uniform(0, 1)
-            constraints += [nodes[0]['time'][i] < nodes[1]['time'][i]]
-            if r == 0:
-                if q > p:
-                    r = 1
-                    constraints += [nodes[0]['data'][i] == nodes[1]['data'][i]]
-            else:
-                constraints += [nodes[0]['time'][i] > nodes[1]['time'][i - 1]]
-                if q <= p:
-                    r = 0
+    def FtyFIFO1(p):
+        def FtyFIFO1Instance(nodes, bound):
+            assert len(nodes) == 2
+            assert 0 <= p <= 1
+    
+            r = 0
+            constraints = []
+            for i in range(bound):
+                q = uniform(0, 1)
+                constraints += [nodes[0]['time'][i] < nodes[1]['time'][i]]
+                if r == 0:
+                    if q > p:
+                        r = 1
+                        constraints += [nodes[0]['data'][i] == nodes[1]['data'][i]]
                 else:
-                    constraints += [nodes[0]['data'][i] == nodes[1]['data'][i]]
-
-        return Conjunction(constraints)
-
+                    constraints += [nodes[0]['time'][i] > nodes[1]['time'][i - 1]]
+                    if q <= p:
+                        r = 0
+                    else:
+                        constraints += [nodes[0]['data'][i] == nodes[1]['data'][i]]
+    
+            return Conjunction(constraints)
+        return FtyFIFO1Instance
 
     # Timer
     @staticmethod
@@ -466,5 +468,6 @@ class Channel:
     #     for i in range(bound):
     #         constraints += [nodes[0]['data'][i] == nodes[1]['data'][i]]
     #         constraints += [nodes[0]['time'][i] == nodes[1]['time'][i]]
+
 
     #     return Conjunction(constraints)
