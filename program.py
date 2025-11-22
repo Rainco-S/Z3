@@ -1,12 +1,7 @@
 from reo import *
 
 def define_connector(connector_name):
-    '''
-    Define a connector according to the input.
-    :param connector_name: used to offer information
-    :return: Connector
-    '''
-    merger_count = 0
+    merger_count = 1
     conn = Connector()
     print(f'Start defining connector {connector_name}')
 
@@ -21,14 +16,19 @@ def define_connector(connector_name):
 
         try:
             if channel_type == 'Merger':
-                merger_count += 1
-                int1 = f"{nodes[2]}_{merger_count * 2 - 1}"
-                int2 = f"{nodes[3]}_{merger_count * 2}"
-                conn.connect(nodes[0], nodes[2], int1)
-                conn.connect(nodes[1], nodes[3], int2)
-                conn.connect('Merger', int1, int2, nodes[4])
+                new_node = []
+                src_num = len(nodes) // 2
+                for i in range(src_num):
+                    merger_count += 1
+                    int = f"{nodes[src_num + i]}_{merger_count}"
+                    conn.connect(nodes[i], nodes[src_num + i], int)
+                    new_node.append(int)
+
+                new_node.append(nodes[-1])
+                conn.connect('Merger', new_node)
             else:
                 conn.connect(channel_type, *nodes)
+                
         except Exception as e:
             print(f"Error {str(e)}")
 
@@ -36,11 +36,8 @@ def define_connector(connector_name):
 
 print('Type connectors according to the following rules: (name the nodes like ABC or A1B1C1)\n'
       'Sync A B\n'
-      'Fifo1 A B\n'
-      'LossySync A B\n'
-      'SyncDrain A B\n'
       'Fifo1e(1) A B\n'
-      'Merger type1 type2 A B C')
+      'Merger type1 type2 ... src_1 src_2 ... snk')
 print("Type 'done' to end defining current connector.")
 
 c1 = define_connector("c1")
