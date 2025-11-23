@@ -406,25 +406,7 @@ class Channel:
     
     # Merge
     @staticmethod
-    def Merger(nodes, bound, idx_1 = 0, idx_2 = 0):
-        assert len(nodes) == 3
-        if bound == idx_1 + idx_2:
-            return True
-        constraints_1 = []
-        constraints_2 = []
-        # Constraints1: Retrieve data from the first source.
-        constraints_1 += [ nodes[0]['data'][idx_1] == nodes[2]['data'][idx_1 + idx_2]]  # Same data
-        constraints_1 += [ nodes[0]['time'][idx_1] == nodes[2]['time'][idx_1 + idx_2]]  # Time match
-        constraints_1 += [ nodes[0]['time'][idx_1] <  nodes[1]['time'][idx_2]]  # 1 operation is earlier than 2.
-        # Constraints2: Retrieve data from the second source.
-        constraints_2 += [ nodes[1]['data'][idx_2] == nodes[2]['data'][idx_1 + idx_2]]  # Same data
-        constraints_2 += [ nodes[1]['time'][idx_2] == nodes[2]['time'][idx_1 + idx_2]]  # Time match
-        constraints_2 += [ nodes[1]['time'][idx_2] <  nodes[0]['time'][idx_1]]  # 2 operation is earlier than 1.
-        return Or(And(Conjunction(constraints_1), Channel.Merger(nodes, bound, idx_1 + 1, idx_2)),
-                  And(Conjunction(constraints_2), Channel.Merger(nodes, bound, idx_1, idx_2 + 1)))
-
-    @staticmethod
-    def MultiMerger(nodes, bound):
+    def Merger(nodes, bound):
         assert len(nodes) >= 3
         def MultiMergerInstance(Index = [0 for _ in range(len(nodes) - 1)]):
             if bound == sum(Index):
@@ -440,4 +422,3 @@ class Channel:
                 constraints += [temp]
             return Disjunction([And(Conjunction(constraints[i]), MultiMergerInstance(Index[:i] + [Index[i] + 1] + Index[i + 1:])) for i in range(len(nodes) - 1)])
         return MultiMergerInstance()
-
