@@ -19,13 +19,13 @@ def define_connector(connector_name):
                 new_node = []
                 src_num = len(nodes) // 2
                 for i in range(src_num):
+                    temp = f"{nodes[src_num + i]}_{merger_count}"
+                    conn.connect(nodes[i], nodes[src_num + i], temp)
+                    new_node.append(temp)
                     merger_count += 1
-                    int = f"{nodes[src_num + i]}_{merger_count}"
-                    conn.connect(nodes[i], nodes[src_num + i], int)
-                    new_node.append(int)
 
                 new_node.append(nodes[-1])
-                conn.connect('Merger', new_node)
+                conn.connect('Merger', *new_node)
             else:
                 conn.connect(channel_type, *nodes)
                 
