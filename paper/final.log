@@ -1,0 +1,213 @@
+This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2024.10.2)  23 NOV 2025 22:59
+entering extended mode
+ restricted \write18 enabled.
+ file:line:error style messages enabled.
+ %&-line parsing enabled.
+**final
+(./final.tex
+LaTeX2e <2023-11-01> patch level 1
+L3 programming layer <2024-02-20>
+(./svproc.cls
+Document Class: svproc 2016/07/20 v1.3 
+ LaTeX document class for Proceedings volumes
+(d:/texlive/2024/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2023/05/17 v1.4n Standard LaTeX document class
+(d:/texlive/2024/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2023/05/17 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count184
+\c@section=\count185
+\c@subsection=\count186
+\c@subsubsection=\count187
+\c@paragraph=\count188
+\c@subparagraph=\count189
+\c@figure=\count190
+\c@table=\count191
+\abovecaptionskip=\skip48
+\belowcaptionskip=\skip49
+\bibindent=\dimen140
+) (d:/texlive/2024/texmf-dist/tex/latex/tools/multicol.sty
+Package: multicol 2023/03/30 v1.9f multicolumn formatting (FMi)
+\c@tracingmulticols=\count192
+\mult@box=\box51
+\multicol@leftmargin=\dimen141
+\c@unbalance=\count193
+\c@collectmore=\count194
+\doublecol@number=\count195
+\multicoltolerance=\count196
+\multicolpretolerance=\count197
+\full@width=\dimen142
+\page@free=\dimen143
+\premulticols=\dimen144
+\postmulticols=\dimen145
+\multicolsep=\skip50
+\multicolbaselineskip=\skip51
+\partial@page=\box52
+\last@line=\box53
+\mc@boxedresult=\box54
+\maxbalancingoverflow=\dimen146
+\mult@rightbox=\box55
+\mult@grightbox=\box56
+\mult@firstbox=\box57
+\mult@gfirstbox=\box58
+\@tempa=\box59
+\@tempa=\box60
+\@tempa=\box61
+\@tempa=\box62
+\@tempa=\box63
+\@tempa=\box64
+\@tempa=\box65
+\@tempa=\box66
+\@tempa=\box67
+\@tempa=\box68
+\@tempa=\box69
+\@tempa=\box70
+\@tempa=\box71
+\@tempa=\box72
+\@tempa=\box73
+\@tempa=\box74
+\@tempa=\box75
+\@tempa=\box76
+\@tempa=\box77
+\@tempa=\box78
+\@tempa=\box79
+\@tempa=\box80
+\@tempa=\box81
+\@tempa=\box82
+\@tempa=\box83
+\@tempa=\box84
+\@tempa=\box85
+\@tempa=\box86
+\@tempa=\box87
+\@tempa=\box88
+\@tempa=\box89
+\@tempa=\box90
+\@tempa=\box91
+\@tempa=\box92
+\@tempa=\box93
+\@tempa=\box94
+\c@minrows=\count198
+\c@columnbadness=\count199
+\c@finalcolumnbadness=\count266
+\last@try=\dimen147
+\multicolovershoot=\dimen148
+\multicolundershoot=\dimen149
+\mult@nat@firstbox=\box95
+\colbreak@box=\box96
+\mc@col@check@num=\count267
+) (d:/texlive/2024/texmf-dist/tex/latex/oberdiek/aliascnt.sty
+Package: aliascnt 2018/09/07 v1.5 Alias counters (HO)
+)
+\c@chapter=\count268
+LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 369.
+LaTeX Font Info:    Redeclaring math symbol \Delta on input line 370.
+LaTeX Font Info:    Redeclaring math symbol \Theta on input line 371.
+LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 372.
+LaTeX Font Info:    Redeclaring math symbol \Xi on input line 373.
+LaTeX Font Info:    Redeclaring math symbol \Pi on input line 374.
+LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 375.
+LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 376.
+LaTeX Font Info:    Redeclaring math symbol \Phi on input line 377.
+LaTeX Font Info:    Redeclaring math symbol \Psi on input line 378.
+LaTeX Font Info:    Redeclaring math symbol \Omega on input line 379.
+\tocchpnum=\dimen150
+\tocsecnum=\dimen151
+\tocsectotal=\dimen152
+\tocsubsecnum=\dimen153
+\tocsubsectotal=\dimen154
+\tocsubsubsecnum=\dimen155
+\tocsubsubsectotal=\dimen156
+\tocparanum=\dimen157
+\tocparatotal=\dimen158
+\tocsubparanum=\dimen159
+\@tempcntc=\count269
+\fnindent=\dimen160
+\c@@inst=\count270
+\c@@auth=\count271
+\c@auco=\count272
+\instindent=\dimen161
+\authrun=\box97
+\authorrunning=\toks17
+\tocauthor=\toks18
+\titrun=\box98
+\titlerunning=\toks19
+\toctitle=\toks20
+\c@theorem=\count273
+\c@case=\count274
+\c@conjecture=\count275
+\c@corollary=\count276
+\c@definition=\count277
+\c@example=\count278
+\c@exercise=\count279
+\c@lemma=\count280
+\c@note=\count281
+\c@problem=\count282
+\c@property=\count283
+\c@proposition=\count284
+\c@question=\count285
+\c@solution=\count286
+\c@remark=\count287
+\headlineindent=\dimen162
+) (d:/texlive/2024/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip16
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+) (d:/texlive/2024/texmf-dist/tex/latex/l3backend/l3backend-xetex.def
+File: l3backend-xetex.def 2024-02-20 L3 backend support: XeTeX
+\g__graphics_track_int=\count288
+\l__pdf_internal_box=\box99
+\g__pdf_backend_object_int=\count289
+\g__pdf_backend_annotation_int=\count290
+\g__pdf_backend_link_int=\count291
+) (./final.aux)
+\openout1 = `final.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 6.
+LaTeX Font Info:    ... okay on input line 6.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 6.
+LaTeX Font Info:    ... okay on input line 6.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 6.
+LaTeX Font Info:    ... okay on input line 6.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 6.
+LaTeX Font Info:    ... okay on input line 6.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 6.
+LaTeX Font Info:    Trying to load font information for TS1+cmr on input line 6.
+ (d:/texlive/2024/texmf-dist/tex/latex/base/ts1cmr.fd
+File: ts1cmr.fd 2023/04/13 v2.5m Standard LaTeX font definitions
+)
+LaTeX Font Info:    ... okay on input line 6.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 6.
+LaTeX Font Info:    ... okay on input line 6.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 6.
+LaTeX Font Info:    ... okay on input line 6.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 6.
+LaTeX Font Info:    ... okay on input line 6.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 19.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 19.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <9> on input line 19.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 19.
+ [1
+
+] (./final.aux)
+ ***********
+LaTeX2e <2023-11-01> patch level 1
+L3 programming layer <2024-02-20>
+ ***********
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 1067 strings out of 474773
+ 17792 string characters out of 5761289
+ 1922842 words of memory out of 5000000
+ 23264 multiletter control sequences out of 15000+600000
+ 559964 words of font info for 51 fonts, out of 8000000 for 9000
+ 1348 hyphenation exceptions out of 8191
+ 49i,5n,52p,191b,301s stack positions out of 10000i,1000n,20000p,200000b,200000s
+
+Output written on final.pdf (1 page).
