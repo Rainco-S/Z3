@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2024.10.2)  23 NOV 2025 22:59
+This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2024.9.25)  24 NOV 2025 14:18
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -10,9 +10,9 @@ L3 programming layer <2024-02-20>
 (./svproc.cls
 Document Class: svproc 2016/07/20 v1.3 
  LaTeX document class for Proceedings volumes
-(d:/texlive/2024/texmf-dist/tex/latex/base/article.cls
+(/usr/local/texlive/2024/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2023/05/17 v1.4n Standard LaTeX document class
-(d:/texlive/2024/texmf-dist/tex/latex/base/size10.clo
+(/usr/local/texlive/2024/texmf-dist/tex/latex/base/size10.clo
 File: size10.clo 2023/05/17 v1.4n Standard LaTeX file (size option)
 )
 \c@part=\count184
@@ -26,7 +26,7 @@ File: size10.clo 2023/05/17 v1.4n Standard LaTeX file (size option)
 \abovecaptionskip=\skip48
 \belowcaptionskip=\skip49
 \bibindent=\dimen140
-) (d:/texlive/2024/texmf-dist/tex/latex/tools/multicol.sty
+) (/usr/local/texlive/2024/texmf-dist/tex/latex/tools/multicol.sty
 Package: multicol 2023/03/30 v1.9f multicolumn formatting (FMi)
 \c@tracingmulticols=\count192
 \mult@box=\box51
@@ -95,7 +95,7 @@ Package: multicol 2023/03/30 v1.9f multicolumn formatting (FMi)
 \mult@nat@firstbox=\box95
 \colbreak@box=\box96
 \mc@col@check@num=\count267
-) (d:/texlive/2024/texmf-dist/tex/latex/oberdiek/aliascnt.sty
+) (/usr/local/texlive/2024/texmf-dist/tex/latex/oberdiek/aliascnt.sty
 Package: aliascnt 2018/09/07 v1.5 Alias counters (HO)
 )
 \c@chapter=\count268
@@ -148,17 +148,21 @@ LaTeX Font Info:    Redeclaring math symbol \Omega on input line 379.
 \c@solution=\count286
 \c@remark=\count287
 \headlineindent=\dimen162
-) (d:/texlive/2024/texmf-dist/tex/latex/url/url.sty
+) (/usr/local/texlive/2024/texmf-dist/tex/latex/url/url.sty
 \Urlmuskip=\muskip16
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
-) (d:/texlive/2024/texmf-dist/tex/latex/l3backend/l3backend-xetex.def
+) (/usr/local/texlive/2024/texmf-dist/tex/latex/l3backend/l3backend-xetex.def
 File: l3backend-xetex.def 2024-02-20 L3 backend support: XeTeX
 \g__graphics_track_int=\count288
 \l__pdf_internal_box=\box99
 \g__pdf_backend_object_int=\count289
 \g__pdf_backend_annotation_int=\count290
 \g__pdf_backend_link_int=\count291
-) (./final.aux)
+) (./final.aux
+
+LaTeX Warning: Label `smit:wat' multiply defined.
+
+)
 \openout1 = `final.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 6.
@@ -171,7 +175,7 @@ LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 6.
 LaTeX Font Info:    ... okay on input line 6.
 LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 6.
 LaTeX Font Info:    Trying to load font information for TS1+cmr on input line 6.
- (d:/texlive/2024/texmf-dist/tex/latex/base/ts1cmr.fd
+ (/usr/local/texlive/2024/texmf-dist/tex/latex/base/ts1cmr.fd
 File: ts1cmr.fd 2023/04/13 v2.5m Standard LaTeX font definitions
 )
 LaTeX Font Info:    ... okay on input line 6.
@@ -198,16 +202,16 @@ L3 programming layer <2024-02-20>
  ***********
 
 
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
  1067 strings out of 474773
- 17792 string characters out of 5761289
- 1922842 words of memory out of 5000000
+ 17936 string characters out of 5757724
+ 1925839 words of memory out of 5000000
  23264 multiletter control sequences out of 15000+600000
  559964 words of font info for 51 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 49i,5n,52p,191b,301s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 49i,5n,52p,191b,299s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on final.pdf (1 page).
