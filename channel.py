@@ -320,6 +320,24 @@ class Channel:
             return Conjunction(constraints)
         return FtyFIFO1Instance
 
+    @staticmethod
+    def LossyFIFO1(p):
+        def LossyFIFO1Instance(nodes, bound):
+            assert len(nodes) == 2
+            assert 0 <= p <= 1
+
+            constraints = []
+            for i in range(bound):
+                q = uniform(0, 1)
+                constraints += [ nodes[0]['time'][i] <  nodes[1]['time'][i] ]
+                if q > p:
+                    constraints += [ nodes[0]['data'][i] == nodes[1]['data'][i] ]
+                if i != 0:
+                    constraints += [ nodes[0]['time'][i] > nodes[1]['time'][i-1] ]
+
+            return Conjunction(constraints)
+        return LossyFIFO1Instance
+
     # Timer
     @staticmethod
     def Timert(t):
