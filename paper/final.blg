@@ -1,0 +1,51 @@
+This is BibTeX, Version 0.99d (TeX Live 2024)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: final.aux
+The style file: splncs03.bst
+Database file #1: reference.bib
+Warning--entry type for "Prob-Reo" isn't style-file defined
+--line 52 of file reference.bib
+Warning--to sort, need author or key in Prob-Reo
+Warning--empty booktitle in Sun2018TowardsFM
+You've used 7 entries,
+            2785 wiz_defined-function locations,
+            639 strings with 5875 characters,
+and the built_in function-call counts, 3911 in all, are:
+= -- 321
+> -- 105
+< -- 8
++ -- 43
+- -- 35
+* -- 251
+:= -- 485
+add.period$ -- 9
+call.type$ -- 7
+change.case$ -- 41
+chr.to.int$ -- 0
+cite$ -- 9
+duplicate$ -- 350
+empty$ -- 356
+format.name$ -- 40
+if$ -- 869
+int.to.chr$ -- 0
+int.to.str$ -- 7
+missing$ -- 72
+newline$ -- 26
+num.names$ -- 16
+pop$ -- 125
+preamble$ -- 1
+purify$ -- 29
+quote$ -- 0
+skip$ -- 124
+stack$ -- 0
+substring$ -- 228
+swap$ -- 203
+text.length$ -- 8
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 28
+warning$ -- 2
+while$ -- 31
+width$ -- 8
+write$ -- 74
+(There were 3 warnings)
