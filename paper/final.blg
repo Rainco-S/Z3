@@ -4,48 +4,48 @@ The top-level auxiliary file: final.aux
 The style file: splncs03.bst
 Database file #1: reference.bib
 Warning--entry type for "Prob-Reo" isn't style-file defined
---line 52 of file reference.bib
+--line 50 of file reference.bib
 Warning--to sort, need author or key in Prob-Reo
 Warning--empty booktitle in Sun2018TowardsFM
-You've used 7 entries,
+You've used 9 entries,
             2785 wiz_defined-function locations,
-            639 strings with 5875 characters,
-and the built_in function-call counts, 3911 in all, are:
-= -- 321
-> -- 105
-< -- 8
-+ -- 43
-- -- 35
-* -- 251
-:= -- 485
-add.period$ -- 9
-call.type$ -- 7
-change.case$ -- 41
+            654 strings with 6251 characters,
+and the built_in function-call counts, 5156 in all, are:
+= -- 432
+> -- 131
+< -- 10
++ -- 53
+- -- 43
+* -- 324
+:= -- 637
+add.period$ -- 14
+call.type$ -- 9
+change.case$ -- 54
 chr.to.int$ -- 0
-cite$ -- 9
-duplicate$ -- 350
-empty$ -- 356
-format.name$ -- 40
-if$ -- 869
+cite$ -- 11
+duplicate$ -- 464
+empty$ -- 478
+format.name$ -- 50
+if$ -- 1154
 int.to.chr$ -- 0
-int.to.str$ -- 7
-missing$ -- 72
-newline$ -- 26
-num.names$ -- 16
-pop$ -- 125
+int.to.str$ -- 9
+missing$ -- 93
+newline$ -- 32
+num.names$ -- 22
+pop$ -- 165
 preamble$ -- 1
-purify$ -- 29
+purify$ -- 36
 quote$ -- 0
-skip$ -- 124
+skip$ -- 162
 stack$ -- 0
-substring$ -- 228
-swap$ -- 203
-text.length$ -- 8
+substring$ -- 310
+swap$ -- 264
+text.length$ -- 10
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 28
+type$ -- 36
 warning$ -- 2
-while$ -- 31
-width$ -- 8
-write$ -- 74
+while$ -- 44
+width$ -- 10
+write$ -- 96
 (There were 3 warnings)

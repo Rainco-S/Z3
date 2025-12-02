@@ -38,6 +38,21 @@ A component can write data items to a source node that it is connected to. The w
 \subsection{Z3}
 Z3 \cite{10.1007/978-3-540-78800-3_24} if an efficient SMT (Satisfiability Modulo Theories) solver freely available from Microsoft. It has been used in various software verification and analysis applications. Z3 expands to deciding the satisfiability (or dully the validity) of first order formulas with respect to combinations of theories such as: arithmetic, bit-vectors, arrays, and uninterpreted functions. Given the data and time constraints of connectors, it allows us to verify the satisfiability of properties or refinement relations. Z3 provides bindings for several programming languages. In this paper, we use \textit{Z3 python-bindings} to construct the models and carry out refinement checking.
 
+\subsection{The UTP observational model}
+Specification and unification phases can be observed in every scientific discipline. During specification sicentists focus on some narrowly defined phenomenon and aim to discover the laws governing that phenomenon, which, typically, are special cases of a more general theory. Unification aims at unifying theory that clearly and convincingly exlains a broader range of phenomena. A proposed unification of theories often receives spectacular confirmation and reward complementary to the prediction of new discoveries or by the development of new technologies. However, a unifying theory is usually complementary to the theories that it links, and does not seek to replace them. In \cite{hoare1997unified} Hoare and He aim at unification in computer science. They saw the need for a comprehensive theory of programming that
+\begin{itemize}
+    \item includes a convincing approach to the study of a range of languages in which computer programs may be expressed,
+    \item must introduce basic concepts and properties that are common to the whole range of programming methods and languages,
+    \item must deal separately with the additions and variations that are particular to specific groups of related languages,
+    \item should aim to treat each aspect and feature in the simplest possible fashion and in isolation from all the other features with which it may be combined or confused.
+\end{itemize}
+Our theory of Reo connectors originated out of these motivations for unification. In this section we introduce the theory of UTP designs and the observational model for connectors briefly. More details about UTP can be found in \cite{hoare1997unified}.
+
+\subsubsection{A theory of designs}
+
+
+\subsubsection{Observational model for connectors}
+
 
 \section{Modeling Connectors}
 \subsection{Basic connectors}

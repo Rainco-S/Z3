@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2024.9.25)  1 DEC 2025 00:11
+This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2024.9.25)  2 DEC 2025 12:49
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -278,23 +278,23 @@ LaTeX Font Info:    ... okay on input line 9.
  [1
 
 ] [2]
-Overfull \hbox (8.30429pt too wide) in paragraph at lines 50--50
+Overfull \hbox (8.30429pt too wide) in paragraph at lines 65--65
 []\TU/lmr/bx/n/10 CptSync: \TU/lmr/m/n/10 The message-corrupting synchronous channel $\OMS/cmsy/m/n/10 ^^@$[]\TU/lmr/m/n/10 p$\OMS/cmsy/m/n/10 !$ \TU/lmr/m/n/10 is a synchronous
  []
 
-(./final.bbl [3]) [4] (./final.aux)
+[3] (./final.bbl) [4] (./final.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-02-20>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 2158 strings out of 474773
- 33300 string characters out of 5757724
- 1933839 words of memory out of 5000000
- 24312 multiletter control sequences out of 15000+600000
+ 2162 strings out of 474773
+ 33405 string characters out of 5757724
+ 1936839 words of memory out of 5000000
+ 24316 multiletter control sequences out of 15000+600000
  561191 words of font info for 57 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 56i,12n,65p,1342b,322s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 56i,12n,65p,1342b,301s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on final.pdf (4 pages).
