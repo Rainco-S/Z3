@@ -53,6 +53,7 @@ During observations it is usual to wait for some initial transient behavior to s
 In our semantic model, the observational semantics for a Reo connector is described by a design, i.e., a relation expressed as $P\vdash Q$, where $P$ is the predicate specifying the relationship among the observations on the source nodes of the connector, and $Q$ is the predicate specifying the condition that should be satisfied by the observations on the sink nodes of the connector. Such a design $P\vdash Q$ is defined as follows:
 \begin{definition}
     A design is a pair of predicates $P\vdash Q$, where neither predicate contains \textit{ok} or \textit{ok'}, and $P$ has only unprimed variables. It has the following meaning:$$P\vdash Q=_{df}(ok\land P\Rightarrow ok'\land Q)$$
+    \label{def:1}
 \end{definition}
 A design predicate represents a pre/post-condition specification. The separation of precondition from post-condition allows us to write a specification that has a more general precondition than simply the domain of the relation used as a specification. Implementing a design, we are allowed to assume that the precondition holds, but we have to satisfy the post-condition. Moreover, we can rely on the system having been started, but we must ensure that it terminates. If the precondition does not hold, or the system does not start, we are not committed to establish the post-condition nor even to make the system terminate.
 Any non-trivial system requires a facility to select between alternatives according to the truth or falsehood of some guard condition $b$. The restriction that b contains no primed variables ensures that it can be checked before starting either of the actions. The conditional expression $P\triangleleft b\triangleright Q$ describes a system that behaves like $P$ if the initial value of $b$ is \textbf{true}, or like $Q$ otherwise. It can be defined as follows:
@@ -91,7 +92,7 @@ The theory of designs can be taken as a tool for representing specifications, pr
 Connectors describe the coordination among components/services. We use $in_R$ and $out_R$ to denote what happens on the source nodes and the sink nodes of a connector \textbf{R}, respectively, instead of using unprimed variables for initial observations (inputs) and primed variables for subsequent ones (outputs) as in \cite{hoare1997unified}. Thus, the alphabet, i.e., the set of all observationcapturing variables, used in this paper is different from that for a design in \cite{hoare1997unified}. The signature gives the rules for the syntax for denoting the elements of the theory. Note that in modeling of connectors not every possible predicate is useful. It is necessary to restrict ourselves to predicates that satisfy certain healthiness conditions which embody aspects of the model being studied: e.g., a predicate describing a connector that produces output without being started should be excluded from the theory ($\lnot ok\land out_{\textbf{R}}=\langle d,1\rangle$). In addition, the results of the theory must match the expected observations in reality, e.g., merging the sink node of a connector that fails to terminate with the source node of any other connector must always lead to non-termination of the whole composed connector (this is the technical motivation for introducing $ok$, $ok'$). The subset of predicates that meet our requirements are called designs.\par
 For an arbitrary connector \textbf{R}, the relevant observations come in pairs, with one observation on the source nodes of \textbf{R}, and one observation on the sink nodes of \textbf{R}. For every node $N$, the corresponding observation on $N$ is given by a (finite or infinite) timed data sequence, which is defined as follows:\par
 Let $D$ be an arbitrary set, the elements of which are called data elements. The set $DS$ of data sequences is defined as$$DS=D^*$$
-i.e., the set of all sequences $\alpha=(\alpha(0),\alpha(1),\alpha(2),\ldots)$ over $D$. Let $\mathbb{R}^*_+$ be the set of non-negative real numbers, which in the present context can be used to represent time moments\footnote{Here we use the continuous time model for connectors since it is expressive and closer to the nature of time in the real world. For example, for a FIFO1 channel, if we have a sequence of two inputs, the time moment for the output should be between the two inputs (The semantics we use for FIFO1 in this paper disallows output and input to happen at the same time moment.). If we use a discrete time model like $\mathbb{N}$, and have the first input at time point 1, then the second input can only happen at a time point greater than 2, i.e., at least 3. But in general, this is not explicit for the input providers.}. For a sequence $s$, we use $|s|$ to denote the length of $s$, and if $s$ is an infinite sequence, then $|s|=\infty$. Let $\mathbb{R}^*_+$ be the set of sequences $a=(a(0),a(1),a(2),\ldots)$ over $\mathbb{R}_+$, and for all $a=(a(0),a(1),a(2),\ldots)$ and $b=(b(0),b(1),b(2),\ldots)$ in $\mathbb{R}^*_+$, if $|a|=|b|$, then
+i.e., the set of all sequences $\alpha=(\alpha(0),\alpha(1),\alpha(2),\ldots)$ over $D$. Let $\mathbb{R}^*_+$ be the set of non-negative real numbers, which in the present context can be used to represent time moments.\footnote{Here we use the continuous time model for connectors since it is expressive and closer to the nature of time in the real world. For example, for a FIFO1 channel, if we have a sequence of two inputs, the time moment for the output should be between the two inputs (The semantics we use for FIFO1 in this paper disallows output and input to happen at the same time moment.). If we use a discrete time model like $\mathbb{N}$, and have the first input at time point 1, then the second input can only happen at a time point greater than 2, i.e., at least 3. But in general, this is not explicit for the input providers.} For a sequence $s$, we use $|s|$ to denote the length of $s$, and if $s$ is an infinite sequence, then $|s|=\infty$. Let $\mathbb{R}^*_+$ be the set of sequences $a=(a(0),a(1),a(2),\ldots)$ over $\mathbb{R}_+$, and for all $a=(a(0),a(1),a(2),\ldots)$ and $b=(b(0),b(1),b(2),\ldots)$ in $\mathbb{R}^*_+$, if $|a|=|b|$, then
 \[
 \begin{split}
     a<b&\text{\qquad iff\qquad}\forall 0\leq n<|a|.a(n)<b(n)\\
@@ -134,20 +135,151 @@ Z3 \cite{10.1007/978-3-540-78800-3_24} if an efficient SMT (Satisfiability Modul
 
 
 \section{Modeling Connectors}
+Since we aim at specifying both finite and infinite behavior of connectors, we use relations on timed data sequences to model connectors. In the following, we assume that all timed data sequences are finite. However, the semantic definition can be easily generalized to infinite sequences, which are timed data streams as proposed in \cite{arbab2002coinductive}. We use $\mathcal{D}$ for a predicate of well-defined timed data sequence types. In other words, we define the behavior only for valid sequences expressed via a predicate $\mathcal{D}$. Then, every connector \textbf{R} can be represented by the design $P(in_\textbf{R})\vdash Q(in_\textbf{R},out_\textbf{R})$ as follows:
+\[
+\begin{split}
+    \textbf{con}&:\textbf{R}(in:in_\textbf{R};out:out_\textbf{R})\\
+    \textbf{pre}&:P(in_\textbf{R})\\
+    \textbf{post}&:Q(in_\textbf{R},out_\textbf{R})
+\end{split}
+\]
+where \textbf{R} is the name of the connector, $P(in_\textbf{R})$ is the precondition that should be satisfied by inputs $in_\textbf{R}$ on the source nodes of \textbf{R}, and $Q(in_\textbf{R},out_\textbf{R})$ is the post-condition that should be satisfied by outputs $out_\textbf{R}$ on the sink nodes of \textbf{R}.\footnote{Note that $ok$ and $ok'$ do not show up in this (and the following) formulation. In fact, such a formulation for a connector gives its specification as a design \textbf{pre}$\vdash$\textbf{post}. According to Definition \ref{def:1}, it means $ok\land\textbf{pre}\Rightarrow ok'\land\textbf{post}$.} Let $\mathcal{N}_{in}$ and $\mathcal{N}_{out}$ be the set of source and sink node names of \textbf{R}, respectively, then $in_\textbf{R}$ and $out_\textbf{R}$ are defined as the following mappings from the corresponding sets to $TDS$:
+\[
+\begin{split}
+    in_\textbf{R}&:\mathcal{N}_{in}\to TDS\\
+    out_\textbf{R}&:\mathcal{N}_{out}\to TDS
+\end{split}
+\]
 \subsection{Basic connectors}
 We first develop the design model for a set of basic Reo connectors, i.e., channels.
+\subsubsection{Sync.}
+The synchronous channel $A\longrightarrow B$ transfers the data without delay in time. So it behaves just as the identity function. The pair of I/O operations on its two ends can succeed only simultaneously, and the input is not taken until the output can be delivered, which is captured by the variable $ok$.
+\[
+\begin{split}
+    \textbf{con}&:\textbf{Sync}(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
+    \textbf{pre}&:\mathcal{D}\langle\alpha,a\rangle\\
+    \textbf{post}&:\mathcal{D}\langle\beta,b\rangle\land\beta=\alpha\land b=a
+\end{split}
+\]
+
+\subsubsection{FIFO1.}
+The simplest form of an asynchronous channel is a FIFO channel with one buffer cell, which is denoted as \textbf{FOFI1}. The FIFO1 channel whose buffer is not full accepts input without immediately outputting it. The accepted data item is kept in the internal FIFO buffer of the channel. The next input can happen only after an output occurs. Note that here we use $(\overrightarrow{b^R})^R<\overrightarrow{a}$ to represent the relationship between the time moments for outputs and their corresponding next inputs.
+This notation can be simplicified to $b<\overrightarrow{a}$ if we consider infinite sequences of inputs and outputs.\footnote{Note that $(\overrightarrow{b^R})^R<\overrightarrow{a}$ denotes the sequence obtained by removing the nth element from $a$ sequence $b$ with length $n$. This operation is defined only for finite sequences. We allow both finite and infinite sequences in our definition since theoretically, infinite sequence is possible, but in implementation (especially for test cases) we can only use finite sequences. For other channels, the representation for infinite or finite sequences in the \textbf{pre} and \textbf{post} conditions are not different. But for FIFO channels, the format being used in the definition is for finite sequence because we also use it in the implementation. The definition for infinite case is similar, the only difference is because we cannot make reverse of an infinite sequence. This is not a big problem, the reader can easily find out which case is discussed and which format can be used according to the context.}
+\[
+\begin{split}
+    \textbf{con}&:\textbf{FIFO1}(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
+    \textbf{pre}&:\mathcal{D}\langle\alpha,a\rangle\\
+    \textbf{post}&:\mathcal{D}\langle\beta,b\rangle\land\beta=\alpha\land a<b\land(\overrightarrow{b^R})^R<\overrightarrow{a}
+\end{split}
+\]
+
+\subsubsection{FIFO1e.}
+On the other hand, for the FIFO1 channel $A-\fbox{\parbox[c][0.2em][c]{1.2em}{\centering e}}\to B$ where the buffer contains the data element e, the communication can be initiated only if the data element e can be taken via the sink end. In this case, we have
+\[
+\begin{split}
+    \textbf{con}&:\textbf{FIFO1}(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
+    \textbf{pre}&:\mathcal{D}\langle\alpha,a\rangle\\
+    \textbf{post}&:\mathcal{D}\langle\beta,b\rangle\land\beta=(e)^{\smallfrown}\alpha\land a<\overrightarrow{b}\land(\overrightarrow{b^R})^R<a
+\end{split}
+\]
+
+\subsubsection{SyncDrain.}
+An exotic channel in Reo is the synchronous drain channel $A$\st{$\rightarrow\leftarrow$}$B$ that has two source ends. Because a drain has no sink end, no data value can ever be obtained from this channel. Thus, all data items written to this channel are lost. A synchronous drain accepts a data item through one of its ends iff a data item is also available for it to simultaneously accept through
+another end, the predicate \textbf{true} in the post-condition means the communication terminates.
+\[
+\begin{split}
+    \textbf{con}&:\textbf{SyncDrain}(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
+    \textbf{pre}&:\mathcal{D}\langle\alpha,a\rangle\land\mathcal{D}\langle\beta,b\rangle\land a=b\\
+    \textbf{post}&:\textbf{true}
+\end{split}
+\]
+
+\subsubsection{LossySync.}
+The lossy synchronous channel $A-\to B$ is similar to a synchronous channel, except that it always accepts all data items through its source end. If it is possible for it to simultaneously dispense the data item through its sink end, the channel transfers the data item.
+Otherwise the data item is lost.
+\[
+\begin{split}
+    \textbf{con}&:\textbf{LossySync}(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
+    \textbf{pre}&:\mathcal{D}\langle\alpha,a\rangle\\
+    \textbf{post}&:\mathcal{D}\langle\beta,b\rangle\land L(\langle\alpha,a\rangle,\langle\beta,b\rangle)
+\end{split}
+\]
+where
+\[
+\begin{split}
+    L(\langle\alpha,a\rangle,&\langle\beta,b\rangle)\equiv(\beta=()\land b=())\\
+    &\lor\left( a(0)\leq b(0)\land\begin{cases}
+        \alpha(0)=\beta(0)\land L(\langle\overrightarrow{\alpha},\overrightarrow{a}\rangle,\langle\overrightarrow{\beta},\overrightarrow{b}\rangle) & \text{if }a(0)=b(0)\\
+        L(\langle\overrightarrow{\alpha},\overrightarrow{a}\rangle,\langle\beta,b\rangle) & \text{if }a(0)<b(0)
+    \end{cases}\right)
+\end{split}
+\]
+
+\subsubsection{Filter.}
+The filter channel $A-\{p\}\to B$ specifies a filter pattern $p$ which is a set of data values. It transfers only those data items that match with the pattern $p$ and loses the rest. A write operation on the source end succeeds only if either the data item to be written does not match with the pattern $p$ or the data item matches the pattern $p$ and it can be taken synchronously via the sink end of the channel.
+\[
+\begin{split}
+    \textbf{con}&:\textbf{Filter}p(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
+    \textbf{pre}&:\mathcal{D}\langle\alpha,a\rangle\\
+    \textbf{post}&:\mathcal{D}\langle\beta,b\rangle\land F(\langle\alpha,a\rangle,\langle\beta,b\rangle)
+\end{split}
+\]
+where
+\[
+\begin{split}
+    F(\langle\alpha,&a\rangle,\langle\beta,b\rangle)\equiv\\
+    &\begin{cases}
+        \beta=()\land b=() & \text{if }\alpha=()\land a=()\\
+        \beta(0)=\alpha(0)\land b(0)=a(0)\land F(\langle\overrightarrow{\alpha},\overrightarrow{a}\rangle,\langle\overrightarrow{\beta},\overrightarrow{b}\rangle) & \text{if }\alpha(0)\in p\\
+        F(\langle\overrightarrow{\alpha},\overrightarrow{a}\rangle,\langle\beta,b\rangle) & \text{if }a(0)\not\in p
+    \end{cases}
+\end{split}
+\]
+
+\subsubsection{p-Producer}
+The p-Producer channel $A$\st{$-p\to$}$B$ specifies a producer pattern p which is a set of data values. Once it accepts a data item from the source end, it produces a data item in the set $p$ which is taken synchronously via the sink end.
+\[
+\begin{split}
+    \textbf{con}&:\textbf{Producer}p(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
+    \textbf{pre}&:\mathcal{D}\langle\alpha,a\rangle\\
+    \textbf{post}&:\mathcal{D}\langle\beta,b\rangle\land\beta\in p^*\land b=a
+\end{split}
+\]
+
+\subsubsection{AsynSpout.}
+The asynchronous spout channel $A$\st{$\leftarrow\parallel\to$}$B$ outputs two sequences of data items at its two output (sink) ends, but the data items on the two ends are never delivered at the same time.
+\[
+\begin{split}
+    \textbf{con}&:\textbf{AsynSpout}(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
+    \textbf{pre}&:\textbf{true}\\
+    \textbf{post}&:\mathcal{D}\langle\alpha,a\rangle\land\mathcal{D}\langle\beta,b\rangle\land|a|=|b|\land a\bowtie b
+\end{split}
+\]
+where $\bowtie\subseteq TS\times TS$ is defined as
+\[
+a\bowtie b\equiv a=()\lor b=()\lor\left(a(0)\neq b(0)\lor\begin{cases}
+    \overrightarrow{a}\bowtie b & \text{if }a(0)<b(0)\\
+    a\bowtie\overrightarrow{b} & \text{if }b(0)<a(0)
+\end{cases}\right)
+\]
+
 \subsection{Timer connectors}
+
 
 \subsection{Probabilistic connectors}
 The specification of channels with probabilistic behavior can be captured by the disjunction or conjunction of different predicates about time and data distributions. We consider four types of probabilistic channels: \textit{message-corrupting synchronous channel}, \textit{randomized synchronous channel}, \textit{probabilistic lossy synchronous channel}, and \textit{faulty FIFO1 channel}. Specifications of other primitive channels are ignored here and can be found at \cite{Prob_Reo}.\par
 
-\textbf{CptSync:} The message-corrupting synchronous channel $-$\st{p}$\to$ is a synchronous channel which has an extra parameter $p$ compared with the primitive synchronous channel. The delivered message can be corrupted with probability $p$. Hence, if a data item flows into the channel through the source end, then the correct data value will be obtained at the sink end with probability $1-p$ and a corrupted data value $\perp$ will be obtained with probability $p$.\par
+\subsubsection{CptSync.}
+The message-corrupting synchronous channel $A-$ \st{$p$} $\to B$ is a synchronous channel which has an extra parameter $p$ compared with the primitive synchronous channel. The delivered message can be corrupted with probability $p$. Hence, if a data item flows into the channel through the source end, then the correct data value will be obtained at the sink end with probability $1-p$ and a corrupted data value $\perp$ will be obtained with probability $p$.
 
-\textbf{RandomSync:} The randomized synchronous channel $\xrightarrow{rand(0,1)}$ can generate a random number $b\in\{0,1\}$ with equal probability when it is activated through an arbitrary write operation on its source end, and this random number will be taken on the sink end simultaneously.\par
+\subsubsection{RandomSync.}
+The randomized synchronous channel $A\xrightarrow{rand(0,1)}B$ can generate a random number $b\in\{0,1\}$ with equal probability when it is activated through an arbitrary write operation on its source end, and this random number will be taken on the sink end simultaneously.
 
-\textbf{ProbSync:} The message transmitted by the probabilistic synchronous channel $-\overset{q}{-}\to$ can get lost with a certain probability $q$. It can also act like a \textit{Sync} channel and the message will be delivered successfully with probability $1-q$.\par
+\subsubsection{ProbSync.}
+The message transmitted by the probabilistic synchronous channel $A-\overset{q}{-}\to B$ can get lost with a certain probability $q$. It can also act like a \textit{Sync} channel and the message will be delivered successfully with probability $1-q$.
 
-\textbf{FaultyFIFO1:} The messages flowing into a faulty FIFO1 channel $\overset{r}{\cdots}{\setlength{\fboxsep}{1pt}\fbox{\vphantom{x}\hphantom{X}}}\to$ can get lost with probability $r$ when it is inserted into the buffer. In this case, the buffer remains empty. It can also behave as a normal \textit{FIFO1} channel when the insertion of data into the buffer is successful with probability $1-r$.\par
+\subsubsection{FaultyFIFO1.}
+The messages flowing into a faulty FIFO1 channel $A\overset{r}{\cdots}{\setlength{\fboxsep}{1pt}\fbox{\vphantom{x}\hphantom{X}}}\to B$ can get lost with probability $r$ when it is inserted into the buffer. In this case, the buffer remains empty. It can also behave as a normal \textit{FIFO1} channel when the insertion of data into the buffer is successful with probability $1-r$.
 
 
 
