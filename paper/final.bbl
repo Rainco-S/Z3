@@ -29,6 +29,9 @@ Nawaz, M.S., Sun, M.: Using pvs for modeling and verification of probabilistic c
 \bibitem{Sun2018TowardsFM}
 Sun, M.: Towards formal modeling and verification of probabilistic connectors in coq xiyue zhang (2018), \url{https://api.semanticscholar.org/CorpusID:85541303}
 
+\bibitem{woodcock2024uncertainty}
+Woodcock, J.: Uncertainty and probabilistic utp. In: The Practice of Formal Methods: Essays in Honour of Cliff Jones, Part II, pp. 184--205. Springer (2024)
+
 \bibitem{ZHANG201927}
 Zhang, X., Hong, W., Li, Y., Sun, M.: Reasoning about connectors using coq and z3. Science of Computer Programming  170,  27--44 (2019), \url{https://www.sciencedirect.com/science/article/pii/S0167642318304076}
 
