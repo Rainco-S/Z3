@@ -1,12 +1,15 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
 \providecommand{\url}[1]{\texttt{#1}}
 \providecommand{\urlprefix}{URL }
 
-\bibitem{Prob-Reo}
+\bibitem{Prob_Reo}
 The source code., \url{https://github.com/Zhang-Xiyue/Prob-Reo}
 
 \bibitem{Reo}
 Arbab, F.: Reo: A channel-based coordination model for component composition. Mathematical Structures in Computer Science  14,  329--366 (06 2004)
+
+\bibitem{arbab2002coinductive}
+Arbab, F., Rutten, J.J.: A coinductive calculus of component connectors. In: International Workshop on Algebraic Development Techniques. pp. 34--55. Springer (2002)
 
 \bibitem{hoare1997unified}
 Hoare, C.A.R.: Unified theories of programming. In: Mathematical methods in program development, pp. 313--367. Springer (1997)

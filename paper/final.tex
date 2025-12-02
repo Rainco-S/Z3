@@ -2,6 +2,7 @@
 
 \usepackage{url}
 \usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{soul}
 \bibliographystyle{splncs03}
 \def\UrlFont{\rmfamily}
@@ -11,7 +12,7 @@
 \title{Connectors: Refinement and test case generation using Z3}
 \titlerunning{Connectors: Refinement and test case generation using Z3}
 \author{Sihan Wu\inst{1} \and Xueyi Tan\inst{2}}
-\authorrunning{S. Wu \& X. Tan}
+\authorrunning{S. Wu and X. Tan}
 \tocauthor{Wu, Tan}
 \institute{Yuanpei College, Peking University, No.5 Yiheyuan Road, Haidian District, Beijing 100871, China,\\
 \email{2300017743@stu.pku.edu.cn},
@@ -49,10 +50,87 @@ Specification and unification phases can be observed in every scientific discipl
 Our theory of Reo connectors originated out of these motivations for unification. In this section we introduce the theory of UTP designs and the observational model for connectors briefly. More details about UTP can be found in \cite{hoare1997unified}.
 
 \subsubsection{A theory of designs}
-
+UTP adopts the relational calculus as the foundation to unify various programming theories. All kinds of specifications, designs and programs are interpreted as relations between an initial observation and a subsequent (intermediate, stable or final) observation of the behavior of their execution. Program correctness and refinement can be represented by inclusion of relations, and all laws of the relational calculus are valid for reasoning about correctness.\par
+Collections of relations form a theory of the paradigm being studied, and it contains three essential parts: an alphabet, a signature, and healthiness conditions.\par
+During observations it is usual to wait for some initial transient behavior to stabilize before making any further observation. In order to express this, we introduce two varaibles \textit{ok}, \textit{ok'}: \textbf{Boolean}. The variable \textit{ok} stands for a successful initialization and the start of a communication. When \textit{ok} is \textbf{false}, the communication has not started, so no observation can be made. The variable \textit{ok'} denotes the observation that the communication has either terminated or reached an intermediate stable state. The communication is divergent when \textit{ok'} is \textbf{false}.\par
+In our semantic model, the observational semantics for a Reo connector is described by a design, i.e., a relation expressed as $P\vdash Q$, where $P$ is the predicate specifying the relationship among the observations on the source nodes of the connector, and $Q$ is the predicate specifying the condition that should be satisfied by the observations on the sink nodes of the connector. Such a design $P\vdash Q$ is defined as follows:
+\begin{definition}
+    A design is a pair of predicates $P\vdash Q$, where neither predicate contains \textit{ok} or \textit{ok'}, and $P$ has only unprimed variables. It has the following meaning:$$P\vdash Q=_{df}(ok\land P\Rightarrow ok'\land Q)$$
+\end{definition}
+A design predicate represents a pre/post-condition specification. The separation of precondition from post-condition allows us to write a specification that has a more general precondition than simply the domain of the relation used as a specification. Implementing a design, we are allowed to assume that the precondition holds, but we have to satisfy the post-condition. Moreover, we can rely on the system having been started, but we must ensure that it terminates. If the precondition does not hold, or the system does not start, we are not committed to establish the post-condition nor even to make the system terminate.
+Any non-trivial system requires a facility to select between alternatives according to the truth or falsehood of some guard condition $b$. The restriction that b contains no primed variables ensures that it can be checked before starting either of the actions. The conditional expression $P\triangleleft b\triangleright Q$ describes a system that behaves like $P$ if the initial value of $b$ is \textbf{true}, or like $Q$ otherwise. It can be defined as follows:
+\begin{definition}
+    The conditional expression is defined as follows:$$P\triangleleft b\triangleright Q=_{df}(\textbf{true}\vdash(b\land P\lor \lnot b\land Q))$$
+\end{definition}
+The sequential composition $P$; $Q$ denotes a system that first executes $P$, and when $P$ terminates executes $Q$. This system is defined via existential quantification to hide its intermediate observation, and to remove the variables that record this observation from the list of free variables of the predicate. To accomplish this hiding, we introduce a fresh set of variables $v_0$ to denote the intermediate observation. These fresh variables replace the input variables $v$ of $Q$ and the output variables $v'$ of $P$, thus the output alphabet of $P$ ($out_{\alpha}P$) and the input alphabet of $Q$ ($in_{\alpha}Q$) must be the same.
+\begin{definition}
+    Let $out_{\alpha}P=\{v'\}$, $in_{\alpha}Q=\{v\}$, then
+    $$P(in:u;out:v');Q(in:v;out:w)=_{df}\exists v_0\cdot P(in:u;out:v_0)\land Q(in:v;out:w)$$
+\end{definition}
+If the conditional and sequential operators are applied to designs, the result is also a design. This follows from the laws below.
+\[
+\begin{split}
+    &(P_1\vdash Q_1)\triangleleft b\triangleright(P_2\vdash Q_2)=((P_1\triangleleft b\triangleright P_2)\vdash(Q_1\triangleleft b\triangleright Q_2))\\
+    &(P_1\vdash Q_1);(P_2\vdash Q_2)=(P_1\land\lnot(Q_1;\lnot P_2)\vdash(Q_1;Q_2))
+\end{split}
+\]
+A reassuring result about a design is the notion of refinement, which is defined via implication. In UTP, we have the well-known property that under refinement, preconditions are weakened and post-conditions are strengthened. This is established by the following definition:
+\begin{definition}
+    $[(P_1\vdash Q_1)\sqsubseteq(P_2\vdash Q_2)]$ \textbf{iff} $[P_1\Rightarrow P_2]\land[P_1\land Q_2\Rightarrow Q_1]$
+\end{definition}
+The theory of designs forms a complete lattice, with miracle $\top_{\textbf{D}}$ as the top element, and abort $\bot_{\textbf{D}}$ as the bottom element.
+$$\top_{\textbf{D}}=_{df}(\textbf{true}\vdash\textbf{false})\text{ and }\bot_{\textbf{D}}=_{df}(\textbf{false}\vdash\textbf{true})$$
+The meet and join operations in the lattice of designs are defined as follows, which represent internal (non-deterministic, demonic) and external (angelic) choices.
+\[
+\begin{split}
+    (P_1\vdash Q_1)\sqcap(P_2\vdash Q_2)&=(P_1\land P_2\vdash Q_1\lor Q_2)\\
+    (P_1\vdash Q_1)\sqcup(P_2\vdash Q_2)&=(P_1\lor P_2\vdash ((P_1\Rightarrow Q_1)\land(P_2\Rightarrow Q_2)))
+\end{split}
+\]
+Finally, iteration is expressed by means of recursive definitions. A recursively defined design has as its body a function on designs; as such, it can be seen as a (monotonic) function on pre/post-condition pairs $(X, Y)$, and iteration is defined as the least fixed point of the monotonic function.\par
+The theory of designs can be taken as a tool for representing specifications, programs, and, as in the following sections, connectors.
 
 \subsubsection{Observational model for connectors}
-
+Connectors describe the coordination among components/services. We use $in_R$ and $out_R$ to denote what happens on the source nodes and the sink nodes of a connector \textbf{R}, respectively, instead of using unprimed variables for initial observations (inputs) and primed variables for subsequent ones (outputs) as in \cite{hoare1997unified}. Thus, the alphabet, i.e., the set of all observationcapturing variables, used in this paper is different from that for a design in \cite{hoare1997unified}. The signature gives the rules for the syntax for denoting the elements of the theory. Note that in modeling of connectors not every possible predicate is useful. It is necessary to restrict ourselves to predicates that satisfy certain healthiness conditions which embody aspects of the model being studied: e.g., a predicate describing a connector that produces output without being started should be excluded from the theory ($\lnot ok\land out_{\textbf{R}}=\langle d,1\rangle$). In addition, the results of the theory must match the expected observations in reality, e.g., merging the sink node of a connector that fails to terminate with the source node of any other connector must always lead to non-termination of the whole composed connector (this is the technical motivation for introducing $ok$, $ok'$). The subset of predicates that meet our requirements are called designs.\par
+For an arbitrary connector \textbf{R}, the relevant observations come in pairs, with one observation on the source nodes of \textbf{R}, and one observation on the sink nodes of \textbf{R}. For every node $N$, the corresponding observation on $N$ is given by a (finite or infinite) timed data sequence, which is defined as follows:\par
+Let $D$ be an arbitrary set, the elements of which are called data elements. The set $DS$ of data sequences is defined as$$DS=D^*$$
+i.e., the set of all sequences $\alpha=(\alpha(0),\alpha(1),\alpha(2),\ldots)$ over $D$. Let $\mathbb{R}^*_+$ be the set of non-negative real numbers, which in the present context can be used to represent time moments\footnote{Here we use the continuous time model for connectors since it is expressive and closer to the nature of time in the real world. For example, for a FIFO1 channel, if we have a sequence of two inputs, the time moment for the output should be between the two inputs (The semantics we use for FIFO1 in this paper disallows output and input to happen at the same time moment.). If we use a discrete time model like $\mathbb{N}$, and have the first input at time point 1, then the second input can only happen at a time point greater than 2, i.e., at least 3. But in general, this is not explicit for the input providers.}. For a sequence $s$, we use $|s|$ to denote the length of $s$, and if $s$ is an infinite sequence, then $|s|=\infty$. Let $\mathbb{R}^*_+$ be the set of sequences $a=(a(0),a(1),a(2),\ldots)$ over $\mathbb{R}_+$, and for all $a=(a(0),a(1),a(2),\ldots)$ and $b=(b(0),b(1),b(2),\ldots)$ in $\mathbb{R}^*_+$, if $|a|=|b|$, then
+\[
+\begin{split}
+    a<b&\text{\qquad iff\qquad}\forall 0\leq n<|a|.a(n)<b(n)\\
+    a\leq b&\text{\qquad iff\qquad}\forall 0\leq n<|a|.a(n)\leq b(n)
+\end{split}
+\]
+For a sequence $a=(a(0),a(1),a(2),\ldots)\in\mathbb{R}^*_+$, and $t\in\mathbb{R}_+$, $a[+t]$ is a sequence defined as follows:
+$$a[+t]=(a(0)+t,a(1)+t,a(2)+t,\ldots)$$
+Furthermore, the element $a(n)$ in a sequence $a=(a(0),a(1),a(2),\ldots)$ can also be expressed in terms of derivatives $a(n)=a^{(n)}(0)$, where $a^{(n)}$ is defined by 
+$$a^{(0)}=a,a^{(1)}=(a(1),a(1),\ldots),a^{(k+1)}=(a^{(k)})^{(1)}$$
+The set $TS$ of time sequences is defined as
+\[
+\begin{split}
+    TS=\{a\in\mathbb{R}^*_+\mid&(\forall 0\leq n<|a|.a(n)<a(n+1))\\
+    &\land(|a|=\infty\Rightarrow\forall t\in\mathbb{R}_+^*.\exists k\in\mathbb{N}.a(k)>t)\}
+\end{split}
+\]
+Thus, a time sequence $a\in TS$ consists of increasing and diverging time moments $a(0)<a(1)<a(2)<\cdots$.\par
+For a sequence $a$, the two operators $a^R$ and $\overrightarrow{a}$ denote the reverse and the tail of $a$, respectively, defined as:
+\[
+\begin{split}
+    a^R&=\begin{cases}
+        ()&\text{if }a=()\\
+        (a')^{R^{\smallfrown}} (a(0))&\text{if }a=(a(0))^{\smallfrown} a'
+    \end{cases}\\
+    \overrightarrow{a}&=\begin{cases}
+        ()&\text{if }a=()\\
+        a'&\text{if }a=(a(0))^{\smallfrown} a'
+    \end{cases}
+\end{split}
+\]
+where $^{\smallfrown}$ is the concatenation operator on sequences. The concatenation of two sequences produces a new sequence that
+starts with the first sequence followed by the second sequence.\par
+The set $TDS$ of timed data sequences is defined as $TDS\subseteq DS\times TS$ of pairs $\langle\alpha,a\rangle$ consisting of a data sequence $\alpha$ and a time sequence $a$ with $|\alpha| = |a|$. Similar to the discussion in \cite{arbab2002coinductive}, timed data sequences can be alternatively and equivalently defined as (a subset of) $(D\times \mathbb{R}_+)^*$ because of the existence of the isomorphism
+$$\langle\alpha,a\rangle\mapsto(\langle\alpha(0),a(0)\rangle,\langle\alpha(1),a(1)\rangle,\langle\alpha(2),a(2)\rangle,\ldots)$$
+The occurrence (i.e., taking or writing) of a data item at some node of a connector is modeled by an element in the timed data sequence for that node, i.e., a pair of a data element and a time moment.
 
 \section{Modeling Connectors}
 \subsection{Basic connectors}
@@ -60,7 +138,7 @@ We first develop the design model for a set of basic Reo connectors, i.e., chann
 \subsection{Timer connectors}
 
 \subsection{Probabilistic connectors}
-The specification of channels with probabilistic behavior can be captured by the disjunction or conjunction of different predicates about time and data distributions. We consider four types of probabilistic channels: \textit{message-corrupting synchronous channel}, \textit{randomized synchronous channel}, \textit{probabilistic lossy synchronous channel}, and \textit{faulty FIFO1 channel}. Specifications of other primitive channels are ignored here and can be found at \cite{Prob-Reo}.\par
+The specification of channels with probabilistic behavior can be captured by the disjunction or conjunction of different predicates about time and data distributions. We consider four types of probabilistic channels: \textit{message-corrupting synchronous channel}, \textit{randomized synchronous channel}, \textit{probabilistic lossy synchronous channel}, and \textit{faulty FIFO1 channel}. Specifications of other primitive channels are ignored here and can be found at \cite{Prob_Reo}.\par
 
 \textbf{CptSync:} The message-corrupting synchronous channel $-$\st{p}$\to$ is a synchronous channel which has an extra parameter $p$ compared with the primitive synchronous channel. The delivered message can be corrupted with probability $p$. Hence, if a data item flows into the channel through the source end, then the correct data value will be obtained at the sink end with probability $1-p$ and a corrupted data value $\perp$ will be obtained with probability $p$.\par
 
