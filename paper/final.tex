@@ -152,7 +152,7 @@ where \textbf{R} is the name of the connector, $P(in_\textbf{R})$ is the precond
 \]
 \subsection{Basic connectors}
 We first develop the design model for a set of basic Reo connectors, i.e., channels.
-\subsubsection{Sync.}
+\subsubsection{Sync:}
 The synchronous channel $A\longrightarrow B$ transfers the data without delay in time. So it behaves just as the identity function. The pair of I/O operations on its two ends can succeed only simultaneously, and the input is not taken until the output can be delivered, which is captured by the variable $ok$.
 \[
 \begin{split}
@@ -162,7 +162,7 @@ The synchronous channel $A\longrightarrow B$ transfers the data without delay in
 \end{split}
 \]
 
-\subsubsection{FIFO1.}
+\subsubsection{FIFO1:}
 The simplest form of an asynchronous channel is a FIFO channel with one buffer cell, which is denoted as \textbf{FOFI1}. The FIFO1 channel whose buffer is not full accepts input without immediately outputting it. The accepted data item is kept in the internal FIFO buffer of the channel. The next input can happen only after an output occurs. Note that here we use $(\overrightarrow{b^R})^R<\overrightarrow{a}$ to represent the relationship between the time moments for outputs and their corresponding next inputs.
 This notation can be simplicified to $b<\overrightarrow{a}$ if we consider infinite sequences of inputs and outputs.\footnote{Note that $(\overrightarrow{b^R})^R<\overrightarrow{a}$ denotes the sequence obtained by removing the nth element from $a$ sequence $b$ with length $n$. This operation is defined only for finite sequences. We allow both finite and infinite sequences in our definition since theoretically, infinite sequence is possible, but in implementation (especially for test cases) we can only use finite sequences. For other channels, the representation for infinite or finite sequences in the \textbf{pre} and \textbf{post} conditions are not different. But for FIFO channels, the format being used in the definition is for finite sequence because we also use it in the implementation. The definition for infinite case is similar, the only difference is because we cannot make reverse of an infinite sequence. This is not a big problem, the reader can easily find out which case is discussed and which format can be used according to the context.}
 \[
@@ -173,7 +173,7 @@ This notation can be simplicified to $b<\overrightarrow{a}$ if we consider infin
 \end{split}
 \]
 
-\subsubsection{FIFO1e.}
+\subsubsection{FIFO1e:}
 On the other hand, for the FIFO1 channel $A-\fbox{\parbox[c][0.2em][c]{1.2em}{\centering e}}\to B$ where the buffer contains the data element e, the communication can be initiated only if the data element e can be taken via the sink end. In this case, we have
 \[
 \begin{split}
@@ -183,7 +183,7 @@ On the other hand, for the FIFO1 channel $A-\fbox{\parbox[c][0.2em][c]{1.2em}{\c
 \end{split}
 \]
 
-\subsubsection{SyncDrain.}
+\subsubsection{SyncDrain:}
 An exotic channel in Reo is the synchronous drain channel $A$\st{$\rightarrow\leftarrow$}$B$ that has two source ends. Because a drain has no sink end, no data value can ever be obtained from this channel. Thus, all data items written to this channel are lost. A synchronous drain accepts a data item through one of its ends iff a data item is also available for it to simultaneously accept through
 another end, the predicate \textbf{true} in the post-condition means the communication terminates.
 \[
@@ -194,7 +194,7 @@ another end, the predicate \textbf{true} in the post-condition means the communi
 \end{split}
 \]
 
-\subsubsection{LossySync.}
+\subsubsection{LossySync:}
 The lossy synchronous channel $A-\to B$ is similar to a synchronous channel, except that it always accepts all data items through its source end. If it is possible for it to simultaneously dispense the data item through its sink end, the channel transfers the data item.
 Otherwise the data item is lost.
 \[
@@ -215,7 +215,7 @@ where
 \end{split}
 \]
 
-\subsubsection{Filter.}
+\subsubsection{Filter:}
 The filter channel $A-\{p\}\to B$ specifies a filter pattern $p$ which is a set of data values. It transfers only those data items that match with the pattern $p$ and loses the rest. A write operation on the source end succeeds only if either the data item to be written does not match with the pattern $p$ or the data item matches the pattern $p$ and it can be taken synchronously via the sink end of the channel.
 \[
 \begin{split}
@@ -236,7 +236,7 @@ where
 \end{split}
 \]
 
-\subsubsection{p-Producer}
+\subsubsection{p-Producer:}
 The p-Producer channel $A$\st{$-p\to$}$B$ specifies a producer pattern p which is a set of data values. Once it accepts a data item from the source end, it produces a data item in the set $p$ which is taken synchronously via the sink end.
 \[
 \begin{split}
@@ -246,7 +246,7 @@ The p-Producer channel $A$\st{$-p\to$}$B$ specifies a producer pattern p which i
 \end{split}
 \]
 
-\subsubsection{AsynSpout.}
+\subsubsection{AsynSpout:}
 The asynchronous spout channel $A$\st{$\leftarrow\parallel\to$}$B$ outputs two sequences of data items at its two output (sink) ends, but the data items on the two ends are never delivered at the same time.
 \[
 \begin{split}
@@ -263,22 +263,42 @@ a\bowtie b\equiv a=()\lor b=()\lor\left(a(0)\neq b(0)\lor\begin{cases}
 \end{cases}\right)
 \]
 
+\subsubsection{AsynDrain:}
+The asynchronous drain channel $A\to\leftarrow B$ inputs two sequences of data items at its two input (source) ends, but the data items on the two ends are never delivered at the same time.
+\[
+\begin{split}
+    \textbf{con}&:\textbf{AsynSpout}(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
+    \textbf{pre}&:\mathcal{D}\langle\alpha,a\rangle\land\mathcal{D}\langle\beta,b\rangle\land|a|=|b|\\
+    \textbf{post}&:a\bowtie b
+\end{split}
+\]
+
+\subsubsection{SyncSpout:}
+The synchronous spout channel $A\leftarrow\mapsto B$ has two sink ends, and outputs data sequence simultaneously, i.e., the two ends must deliver data items at the same time.
+\[
+\begin{split}
+    \textbf{con}&:\textbf{SyncSpout}(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
+    \textbf{pre}&:\textbf{true}\\
+    \textbf{post}&:\mathcal{D}\langle\alpha,a\rangle\land\mathcal{D}\langle\beta,b\rangle\land|a|=|b|\land a=b
+\end{split}
+\]
+
 \subsection{Timer connectors}
 
 
 \subsection{Probabilistic connectors}
 The specification of channels with probabilistic behavior can be captured by the disjunction or conjunction of different predicates about time and data distributions. We consider four types of probabilistic channels: \textit{message-corrupting synchronous channel}, \textit{randomized synchronous channel}, \textit{probabilistic lossy synchronous channel}, and \textit{faulty FIFO1 channel}. Specifications of other primitive channels are ignored here and can be found at \cite{Prob_Reo}.\par
 
-\subsubsection{CptSync.}
-The message-corrupting synchronous channel $A-$ \st{$p$} $\to B$ is a synchronous channel which has an extra parameter $p$ compared with the primitive synchronous channel. The delivered message can be corrupted with probability $p$. Hence, if a data item flows into the channel through the source end, then the correct data value will be obtained at the sink end with probability $1-p$ and a corrupted data value $\perp$ will be obtained with probability $p$.
+\subsubsection{CptSync:}
+The message-corrupting synchronous channel $A\xrightarrow{p}B$ is a synchronous channel which has an extra parameter $p$ compared with the primitive synchronous channel. The delivered message can be corrupted with probability $p$. Hence, if a data item flows into the channel through the source end, then the correct data value will be obtained at the sink end with probability $1-p$ and a corrupted data value $\perp$ will be obtained with probability $p$.
 
-\subsubsection{RandomSync.}
+\subsubsection{RandomSync:}
 The randomized synchronous channel $A\xrightarrow{rand(0,1)}B$ can generate a random number $b\in\{0,1\}$ with equal probability when it is activated through an arbitrary write operation on its source end, and this random number will be taken on the sink end simultaneously.
 
-\subsubsection{ProbSync.}
+\subsubsection{ProbSync:}
 The message transmitted by the probabilistic synchronous channel $A-\overset{q}{-}\to B$ can get lost with a certain probability $q$. It can also act like a \textit{Sync} channel and the message will be delivered successfully with probability $1-q$.
 
-\subsubsection{FaultyFIFO1.}
+\subsubsection{FaultyFIFO1:}
 The messages flowing into a faulty FIFO1 channel $A\overset{r}{\cdots}{\setlength{\fboxsep}{1pt}\fbox{\vphantom{x}\hphantom{X}}}\to B$ can get lost with probability $r$ when it is inserted into the buffer. In this case, the buffer remains empty. It can also behave as a normal \textit{FIFO1} channel when the insertion of data into the buffer is successful with probability $1-r$.
 
 
