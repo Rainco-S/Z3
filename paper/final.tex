@@ -284,6 +284,19 @@ The synchronous spout channel $A\leftarrow\mapsto B$ has two sink ends, and outp
 \]
 
 \subsection{Timer connectors}
+We now describe the design models of a few timer channels in Reo that can serve to measure the time between two events and produce timeout signals.
+\subsubsection{t-timer:}
+The source end of a $t$-timer channal $A-\overset{t}{\circ}\to B$ accepts any input value $d$ and returns on its sink end $B$ a timeout signal after a delay of $t$ time units.
+\[
+\begin{split}
+    \textbf{con}&:\textbf{Timer}t(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
+    \textbf{pre}&:\mathcal{D}\langle\alpha,a\rangle\land a[+t]\leq\overrightarrow{a}\\
+    \textbf{post}&:\mathcal{D}\langle\beta,b\rangle\land\beta\in\{timeout\}^*\land b=a[+t]
+\end{split}
+\]
+
+\subsubsection{off-timer}
+A $t$-timer with the $off$-option 
 
 
 \subsection{Probabilistic connectors}
