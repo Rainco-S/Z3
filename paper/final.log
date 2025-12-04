@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2024.9.25)  3 DEC 2025 10:11
+This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2024.9.25)  4 DEC 2025 14:45
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -293,19 +293,38 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 23.
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
-] [2] [3] [4] [5] [6] [7] [8] [9] [10] (./final.bbl [11]) [12] (./final.aux)
+] [2] [3] [4] [5] [6] [7] [8] [9]
+LaTeX Font Info:    Trying to load font information for OMS+lmr on input line 278.
+ (/usr/local/texlive/2024/texmf-dist/tex/latex/lm/omslmr.fd
+File: omslmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 278.
+ (/usr/local/texlive/2024/texmf-dist/tex/latex/lm/omslmsy.fd
+File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+LaTeX Font Info:    Font shape `OMS/lmr/m/n' in size <10> not available
+(Font)              Font shape `OMS/lmsy/m/n' tried instead on input line 278.
+ [10] [11]
+Overfull \hbox (9.07124pt too wide) detected at line 367
+[]
+ []
+
+(./final.bbl
+Underfull \vbox (badness 7649) has occurred while \output is active []
+
+ [12]) [13] (./final.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-02-20>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 2736 strings out of 474773
- 40681 string characters out of 5757724
- 1939839 words of memory out of 5000000
- 24852 multiletter control sequences out of 15000+600000
- 563351 words of font info for 78 fonts, out of 8000000 for 9000
+ 2770 strings out of 474773
+ 41387 string characters out of 5757724
+ 1938839 words of memory out of 5000000
+ 24879 multiletter control sequences out of 15000+600000
+ 563654 words of font info for 79 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 56i,34n,65p,1447b,324s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 56i,34n,65p,1447b,319s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on final.pdf (12 pages).
+Output written on final.pdf (13 pages).

@@ -102,7 +102,7 @@ i.e., the set of all sequences $\alpha=(\alpha(0),\alpha(1),\alpha(2),\ldots)$ o
 For a sequence $a=(a(0),a(1),a(2),\ldots)\in\mathbb{R}^*_+$, and $t\in\mathbb{R}_+$, $a[+t]$ is a sequence defined as follows:
 $$a[+t]=(a(0)+t,a(1)+t,a(2)+t,\ldots)$$
 Furthermore, the element $a(n)$ in a sequence $a=(a(0),a(1),a(2),\ldots)$ can also be expressed in terms of derivatives $a(n)=a^{(n)}(0)$, where $a^{(n)}$ is defined by 
-$$a^{(0)}=a,a^{(1)}=(a(1),a(1),\ldots),a^{(k+1)}=(a^{(k)})^{(1)}$$
+$$a^{(0)}=a,a^{(1)}=(a(1),a(2),\ldots),a^{(k+1)}=(a^{(k)})^{(1)}$$
 The set $TS$ of time sequences is defined as
 \[
 \begin{split}
@@ -224,16 +224,13 @@ The filter channel $A-\{p\}\to B$ specifies a filter pattern $p$ which is a set 
     \textbf{post}&:\mathcal{D}\langle\beta,b\rangle\land F(\langle\alpha,a\rangle,\langle\beta,b\rangle)
 \end{split}
 \]
-where
+where $F(\langle\alpha,a\rangle,\langle\beta,b\rangle)\equiv$
 \[
-\begin{split}
-    F(\langle\alpha,&a\rangle,\langle\beta,b\rangle)\equiv\\
-    &\begin{cases}
-        \beta=()\land b=() & \text{if }\alpha=()\land a=()\\
-        \beta(0)=\alpha(0)\land b(0)=a(0)\land F(\langle\overrightarrow{\alpha},\overrightarrow{a}\rangle,\langle\overrightarrow{\beta},\overrightarrow{b}\rangle) & \text{if }\alpha(0)\in p\\
-        F(\langle\overrightarrow{\alpha},\overrightarrow{a}\rangle,\langle\beta,b\rangle) & \text{if }a(0)\not\in p
-    \end{cases}
-\end{split}
+\begin{cases}
+    \beta=()\land b=() & \text{if }\alpha=()\land a=()\\
+    \beta(0)=\alpha(0)\land b(0)=a(0)\land F(\langle\overrightarrow{\alpha},\overrightarrow{a}\rangle,\langle\overrightarrow{\beta},\overrightarrow{b}\rangle) & \text{if }\alpha(0)\in p\\
+    F(\langle\overrightarrow{\alpha},\overrightarrow{a}\rangle,\langle\beta,b\rangle) & \text{if }a(0)\not\in p
+\end{cases}
 \]
 
 \subsubsection{p-Producer:}
@@ -263,29 +260,11 @@ a\bowtie b\equiv a=()\lor b=()\lor\left(a(0)\neq b(0)\lor\begin{cases}
 \end{cases}\right)
 \]
 
-\subsubsection{AsynDrain:}
-The asynchronous drain channel $A\to\leftarrow B$ inputs two sequences of data items at its two input (source) ends, but the data items on the two ends are never delivered at the same time.
-\[
-\begin{split}
-    \textbf{con}&:\textbf{AsynSpout}(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
-    \textbf{pre}&:\mathcal{D}\langle\alpha,a\rangle\land\mathcal{D}\langle\beta,b\rangle\land|a|=|b|\\
-    \textbf{post}&:a\bowtie b
-\end{split}
-\]
-
-\subsubsection{SyncSpout:}
-The synchronous spout channel $A\leftarrow\mapsto B$ has two sink ends, and outputs data sequence simultaneously, i.e., the two ends must deliver data items at the same time.
-\[
-\begin{split}
-    \textbf{con}&:\textbf{SyncSpout}(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
-    \textbf{pre}&:\textbf{true}\\
-    \textbf{post}&:\mathcal{D}\langle\alpha,a\rangle\land\mathcal{D}\langle\beta,b\rangle\land|a|=|b|\land a=b
-\end{split}
-\]
+The \textbf{asynchronous drain} channel $A\to\leftarrow B$ inputs two sequences of data items at its two input (source) ends, but the data items on the two ends are never delivered at the same time. Moreover, the \textbf{synchronous spout} channel $A\leftarrow\mapsto B$ has two sink ends, and outputs data sequence simultaneously, i.e., the two ends must deliver data items at the same time. Similar to the definition for synchronous drain and asynchronous spout, we can easily derive the design models for asynchronous drain and synchronous spout channels as well, which we skip here.
 
 \subsection{Timer connectors}
 We now describe the design models of a few timer channels in Reo that can serve to measure the time between two events and produce timeout signals.
-\subsubsection{t-timer:}
+\subsubsection{t-Timer:}
 The source end of a $t$-timer channal $A-\overset{t}{\circ}\to B$ accepts any input value $d$ and returns on its sink end $B$ a timeout signal after a delay of $t$ time units.
 \[
 \begin{split}
@@ -295,26 +274,101 @@ The source end of a $t$-timer channal $A-\overset{t}{\circ}\to B$ accepts any in
 \end{split}
 \]
 
-\subsubsection{off-timer}
-A $t$-timer with the $off$-option 
+\subsubsection{Off-Timer}
+The $t$-timer with the $off$-option $A-$\st{$\circ$}\textcircled{t}$\to B$ allows the timer to be stopped before the expiration of its delay when a special "\textit{off}" value is consumed through its source end.
+\[
+\begin{split}
+    \textbf{con}&:\textbf{OFFTimer}t(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
+    \textbf{pre}&:\mathcal{D}\langle\alpha,a\rangle\land\forall i<|a|.(a[+t](i)\leq\overrightarrow{a}(i)\lor\overrightarrow{a}(i)=off)\\
+    \textbf{post}&:\mathcal{D}\langle\beta,b\rangle\land\beta\in\{timeout\}^*\land OFF(\langle\alpha,a\rangle,\langle\beta,b\rangle)
+\end{split}
+\]
+where $OFF(\langle\alpha,a\rangle,\langle\beta,b\rangle)\equiv$
+\[
+\begin{cases}
+    \langle\beta,b\rangle=\langle(),()\rangle & \text{if }\langle\alpha,a\rangle=\langle(),()\rangle\\
+    OFF(\langle\overrightarrow{\alpha},\overrightarrow{a}\rangle,\langle\beta,b\rangle) & \text{if }a(1)<a(0)+t\land\alpha(1)=off\\
+    OFF(\langle\overrightarrow{\alpha},\overrightarrow{a}\rangle,\langle\overrightarrow{\beta},\overrightarrow{b}\rangle)\land\beta(0)=a(0)+t & \text{if }a(0)+t\leq a(1)\lor|a|=1
+\end{cases}
+\]
 
+\subsubsection{Reset-Timer}
+The reset-timer $A$\st{$\Lsh$}\textcircled{t}$\to B$ allows the timer to be reset to 0 after it has been activated when a special “reset" value is consumed through its source end.
+\[
+\begin{split}
+    \textbf{con}&:\textbf{RSTTimer}t(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
+    \textbf{pre}&:\mathcal{D}\langle\alpha,a\rangle\land\forall i<|a|.(a[+t](i)\leq\overrightarrow{a}(i)\lor\overrightarrow{a}(i)=reset)\\
+    \textbf{post}&:\mathcal{D}\langle\beta,b\rangle\land\beta\in\{timeout\}^*\land RT(\langle\alpha,a\rangle,\langle\beta,b\rangle)
+\end{split}
+\]
+where $RT(\langle\alpha,a\rangle,\langle\beta,b\rangle)$ is similar to the definition of $OFF$ except that it changes the prerequisite of the second line into $a(1)<a(0)+t\land\alpha(1)=reset$.
+
+\subsubsection{Expire-Timer}
+The t-timer with early expiration $A$\st{$\Rsh$}\textcircled{t}$\to B$ makes the timer produce its timeout signal through its sink and reset itself when it consumes a special “expire" value through its source end.
+\[
+\begin{split}
+    \textbf{con}&:\textbf{EXPTimer}t(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
+    \textbf{pre}&:\mathcal{D}\langle\alpha,a\rangle\land\forall i<|a|.(a[+t](i)\leq\overrightarrow{a}(i)\lor\overrightarrow{a}(i)=expire)\\
+    \textbf{post}&:\mathcal{D}\langle\beta,b\rangle\land\beta\in\{timeout\}^*\land ET(\langle\alpha,a\rangle,\langle\beta,b\rangle)
+\end{split}
+\]
+where $ET(\langle\alpha,a\rangle,\langle\beta,b\rangle)\equiv$
+\[
+\begin{cases}
+    \langle\beta,b\rangle=\langle(),()\rangle & \text{if }\langle\alpha,a\rangle=\langle(),()\rangle\\
+    ET(\langle\overrightarrow{\alpha},\overrightarrow{a}\rangle,\langle\beta,b\rangle)\land b(0)=a(0)+t & \text{if }a(0)+t<a(1)\land|a|=1\\
+    ET(\langle\overrightarrow{\alpha},\overrightarrow{a}\rangle,\langle\overrightarrow{\beta},\overrightarrow{b}\rangle)\land b(0)=a(1) & \text{if }a(1)<a(0)+t\land a(1)=expire
+\end{cases}
+\]
 
 \subsection{Probabilistic connectors}
-The specification of channels with probabilistic behavior can be captured by the disjunction or conjunction of different predicates about time and data distributions. We consider four types of probabilistic channels: \textit{message-corrupting synchronous channel}, \textit{randomized synchronous channel}, \textit{probabilistic lossy synchronous channel}, and \textit{faulty FIFO1 channel}. Specifications of other primitive channels are ignored here and can be found at \cite{Prob_Reo}.\par
+The specification of channels with probabilistic behavior can be captured by the disjunction or conjunction of different predicates about time and data distributions. We consider four types of probabilistic channels: \textit{message-corrupting synchronous channel}, \textit{randomized synchronous channel}, \textit{probabilistic lossy synchronous channel}, and \textit{faulty FIFO1 channel}. Specifications of other primitive channels are ignored here and can be found at \cite{Prob_Reo}.
 
 \subsubsection{CptSync:}
 The message-corrupting synchronous channel $A\xrightarrow{p}B$ is a synchronous channel which has an extra parameter $p$ compared with the primitive synchronous channel. The delivered message can be corrupted with probability $p$. Hence, if a data item flows into the channel through the source end, then the correct data value will be obtained at the sink end with probability $1-p$ and a corrupted data value $\perp$ will be obtained with probability $p$.
+\[
+\begin{split}
+    \textbf{con}:&\textbf{CptSync}p(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
+    \textbf{pre}:&\mathcal{D}\langle\alpha,a\rangle\\
+    \textbf{post}:&\mathcal{D}\langle\beta,b\rangle\land b=a\land\forall i<|a|.\\
+    &((\beta(i).data=\alpha(i).data\land\beta(i).prob=\alpha(i).prob\cdot(1-p))\lor\\
+    &(\beta(i).data=corrupted\land\beta(i).prob=\alpha(i).prob\cdot p))
+\end{split}
+\]
 
 \subsubsection{RandomSync:}
 The randomized synchronous channel $A\xrightarrow{rand(0,1)}B$ can generate a random number $b\in\{0,1\}$ with equal probability when it is activated through an arbitrary write operation on its source end, and this random number will be taken on the sink end simultaneously.
+\[
+\begin{split}
+    \textbf{con}:&\textbf{RdmSync}(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
+    \textbf{pre}:&\mathcal{D}\langle\alpha,a\rangle\\
+    \textbf{post}:&\mathcal{D}\langle\beta,b\rangle\land b=a\land\forall i<|\beta|.\\
+    &((\beta(i).data=0\land\beta(i).prob=1/2)\lor\\
+    &(\beta(i).data=1\land\beta(i).prob=1/2))
+\end{split}
+\]
 
 \subsubsection{ProbSync:}
 The message transmitted by the probabilistic synchronous channel $A-\overset{q}{-}\to B$ can get lost with a certain probability $q$. It can also act like a \textit{Sync} channel and the message will be delivered successfully with probability $1-q$.
+\[
+\begin{split}
+    \textbf{con}:&\textbf{ProbLossy}q(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
+    \textbf{pre}:&\mathcal{D}\langle\alpha,a\rangle\\
+    \textbf{post}:&\mathcal{D}\langle\beta,b\rangle\land PL(\langle\alpha,a\rangle,\langle\beta,b\rangle,q)
+\end{split}
+\]
+where $PL(\langle\alpha,a\rangle,\langle\beta,b\rangle,q)\equiv$
+\[
+\begin{cases}
+    \langle\beta,b\rangle=\langle(),()\rangle & \text{if }\langle\alpha,a\rangle=\langle(),()\rangle\\
+    PL(\langle\alpha^{(1)},a^{(1)}\rangle,\langle\beta,b\rangle,q)\lor(PL(\langle\alpha^{(1)},a^{(1)}\rangle,\langle\beta^{(1)},b^{(1)}\rangle,q)\land & \text{else} \\
+    |\beta|>0\land\alpha(0).data=\beta(0)\land \beta(0).prob=\alpha(0).prob\cdot(1-q))
+\end{cases}
+\]
 
 \subsubsection{FaultyFIFO1:}
-The messages flowing into a faulty FIFO1 channel $A\overset{r}{\cdots}{\setlength{\fboxsep}{1pt}\fbox{\vphantom{x}\hphantom{X}}}\to B$ can get lost with probability $r$ when it is inserted into the buffer. In this case, the buffer remains empty. It can also behave as a normal \textit{FIFO1} channel when the insertion of data into the buffer is successful with probability $1-r$.
-
-
+The messages flowing into a faulty FIFO1 channel $A\overset{r}{\cdots}{\setlength{\fboxsep}{1pt}\fbox{\vphantom{x}\hphantom{X}}}\to B$ can get lost with probability $r$ when it is inserted into the buffer. In this case, the buffer remains empty. It can also behave as a normal \textit{FIFO1} channel when the insertion of data into the buffer is successful with probability $1-r$.\par
+Another kind of faulty FIFO1 channel named LossyFIFO1 channel $A\to{\setlength{\fboxsep}{1pt}\fbox{\vphantom{x}\hphantom{X}}}\overset{r}{\cdots}B$ works perfectly on the insertion of data item into its buffer but may loose messages from the buffer before being taken on the sink end. The difference between this channel and FtyFIFO1 is that the loss of data items happens in different steps. Loss behavior in this channel arises in the process of being taken from the buffer, while loss behavior in FtyFIFO1 arises in the process of storage into the buffer.
 
 \subsection{Composing connectors}
 
