@@ -1,0 +1,97 @@
+\usetikzlibrary{arrows, decorations.pathmorphing, decorations.markings, shapes.geometric, calc, positioning}
+
+\tikzset{
+    reoEdge/.style={->, >=latex, thin},
+    reoSpout/.style={<->, >=latex, thin},
+    reoLossy/.style={->, >=latex, thin, dashed},
+    reoWavy/.style={->, >=latex, thin, decorate, decoration={zigzag, amplitude=1mm, segment length=1.5mm, post length=1.5mm, pre length=1.5mm}},
+}
+
+% A. 基础连线类 (Sync, Lossy, Filter)  参数: #1=样式(可选), #2=起点, #3=终点, #4=标签文字(可选)
+\newcommand{\drawLink}[4][reoEdge]{
+    \draw[#1] (#2) -- node[above, font=\scriptsize] {#4} (#3);
+}
+
+% B. FIFO 类 (中间带方框)  参数: #1=起点, #2=终点, #3=方框内文字, #4=额外样式(可选,如 dashed)
+\newcommand{\drawFIFO}[4][]{
+    \draw[reoEdge, #1] (#2) -- node[midway, sloped, allow upside down, draw, fill=white, rectangle, minimum width = 6mm, minimum height = 2mm, inner sep=1pt, font=\tiny] {#4} (#3);
+}
+
+% C. Drain 类 (两头向中间汇聚)  参数: #1=起点1, #2=起点2, #3=汇聚点/符号位置(通常是这两个点的中点), #4=中心符号(如 ||)
+\newcommand{\drawDrain}[5]{
+    % 计算中点
+    \coordinate (mid1) at ($(#1)!0.4!(#2)$);
+    \coordinate (mid) at ($(#1)!0.5!(#2)$);
+    \coordinate (mid2) at ($(#1)!0.6!(#2)$);
+    % 画两段箭头指向中点
+    \draw[->, >=latex, thin] (#1) -- (mid1);
+    \draw[thin] (mid1) -- (mid);
+    \draw[thin] (mid) -- (mid2);
+    \draw[->, >=latex, thin] (#2) -- (mid2);
+    % 画中心符号
+    \node at (mid) [font=\tiny, inner sep=1pt] {#3};
+    \node at (mid1) [font=\tiny, inner sep=1pt] {#4};
+    \node at (mid2) [font=\tiny, inner sep=1pt] {#5};
+    % 实际上 Drain 并没有显式的 Sink 节点，这里 #3 只是为了兼容位置逻辑，或者如果不画节点只画线
+}
+
+% D. Spout 类 (一点分发给两点)  参数: #1=源点, #2=终点1, #3=终点2, #4=线样式
+\newcommand{\drawSpout}[5]{
+    % 计算中点
+    \coordinate (mid1) at ($(#1)!0.4!(#2)$);
+    \coordinate (mid) at ($(#1)!0.5!(#2)$);
+    \coordinate (mid2) at ($(#1)!0.6!(#2)$);
+    % 画两段箭头指向中点
+    \draw[->, >=latex, thin] (mid1) -- (#1);
+    \draw[thin] (mid1) -- (mid);
+    \draw[thin] (mid) -- (mid2);
+    \draw[->, >=latex, thin] (mid2) -- (#2);
+    % 画中心符号
+    \node at (mid) [font=\tiny, inner sep=1pt] {#3};
+    \node at (mid1) [font=\tiny, inner sep=1pt] {#4};
+    \node at (mid2) [font=\tiny, inner sep=1pt] {#5};
+    % 实际上 Drain 并没有显式的 Sink 节点，这里 #3 只是为了兼容位置逻辑，或者如果不画节点只画线
+}
+
+% E. Timer 类 (中间带圆角框)  参数: #1=起点, #2=终点, #3=延迟时间 t
+\newcommand{\drawTimer}[3]{
+    \draw[reoEdge] (#1) -- node[draw, fill=white, rectangle, rounded corners=2pt, minimum size=3.5mm, inner sep=1pt, font=\tiny] (timerbox) {#3} (#2);
+}
+
+% F. 复杂 Timer 类 (带控制端口 OFF/RESET/EXPIRE)  参数: #1=起点, #2=终点, #3=延迟时间 t, #4=控制类型(OFF/RST/EXP), #5=控制节点位置(above/below)
+\newcommand{\drawComplexTimer}[5]{
+    % 先画基础 Timer
+    \draw[reoEdge] (#1) -- node[draw, fill=white, rectangle, rounded corners=2pt, minimum size=3.5mm, inner sep=1pt, font=\tiny] (timerbox) {#3} (#2);
+    % 画控制端口
+    \node (ctrl) [#5=0.5cm of timerbox, font=\tiny] {#4};
+    \draw[->, >=latex, dashed] (ctrl) -- (timerbox);
+}
+
+
+% --- 1. Basic Channels ---
+\newcommand{\chanSync}[2]{\drawLink{#1}{#2}{}}
+\newcommand{\chanLossySync}[2]{\drawLink[reoLossy]{#1}{#2}{}}
+\newcommand{\chanSyncDrain}[2]{\drawDrain{#1}{#2}{}{}{}} % 空心汇聚
+\newcommand{\chanAsynDrain}[2]{\drawDrain{#1}{#2}{$||$}{}{}} % 带竖线汇聚
+% --- 2. FIFO Variants ---
+\newcommand{\chanFifoOne}[2]{\drawFIFO{#1}{#2}{}}          % Buffer size 1
+\newcommand{\chanFifoN}[3]{\drawFIFO{#1}{#2}{$N=#3$}}      % Buffer size n
+\newcommand{\chanFifoOneE}[3]{\drawFIFO{#1}{#2}{$#3$}}     % Initialized with e
+\newcommand{\chanFifoNE}[4]{\drawFIFO{#1}{#2}{$#3$}}    % Initialized e with size n
+% --- 3. Filter & Producer ---
+\newcommand{\chanFilterP}[3]{\drawLink[reoWavy]{#1}{#2}{$P(#3)$}} 
+\newcommand{\chanProducerP}[3]{\drawLink{#1}{#2}{Prod: $#3$}} 
+% --- 4. Spouts ---
+\newcommand{\chanSyncSpout}[2]{\drawSpout{#1}{#2}{}{}{}}
+\newcommand{\chanAsynSpout}[2]{\drawSpout{#1}{#2}{$||$}{}{}}
+% --- 5. Probabilistic/Faulty ---
+\newcommand{\chanCptSync}[3]{\drawLink{#1}{#2}{$p=#3$}}       % Corrupting Sync
+\newcommand{\chanRdmSync}[3]{\drawLink{#1}{#2}{#3}}         % Random Sync
+\newcommand{\chanProbLossy}[3]{\drawLink[reoLossy]{#1}{#2}{$p=#3$}} % Probabilistic Lossy
+\newcommand{\chanFtyFifoOne}[3]{\drawFIFO{#1}{#2}{Fty:$#3$}} % Faulty FIFO
+\newcommand{\chanLossyFifoOne}[3]{\drawFIFO[dashed]{#1}{#2}{Lossy:$#3$}} % Lossy FIFO
+% --- 6. Timers ---
+\newcommand{\chanTimert}[3]{\drawTimer{#1}{#2}{#3}}
+\newcommand{\chanOFFTimert}[3]{\drawComplexTimer{#1}{#2}{#3}{OFF}{above}}
+\newcommand{\chanRSTTimert}[3]{\drawComplexTimer{#1}{#2}{#3}{RST}{above}}
+\newcommand{\chanEXPTimert}[3]{\drawComplexTimer{#1}{#2}{#3}{EXP}{above}}

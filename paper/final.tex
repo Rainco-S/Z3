@@ -4,6 +4,11 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{soul}
+\usepackage{graphicx}
+\usepackage{tikz}
+
+\input{tikz_template}
+
 \bibliographystyle{splncs03}
 \def\UrlFont{\rmfamily}
 
@@ -377,6 +382,180 @@ Another kind of faulty FIFO1 channel named LossyFIFO1 channel $A\to{\setlength{\
 
 \section{Refinement checking and test case generation in Z3}
 \subsection{Test case for connectors}
+
+\begin{figure}[htbp] % Basic test case
+  \centering
+    \begin{tikzpicture}[x=2cm, y=1cm]
+    \tikzstyle{node0}=[circle, draw, fill=white, inner sep=0pt, minimum size=1.5mm]
+    \tikzstyle{node1}=[circle, draw, fill=black, inner sep=0pt, minimum size=1.5mm]
+
+    % connector 1
+    \node[node0, label=above:A] (A1) at (0, -0.5) {};
+    \node[node0, label=above:B] (B1) at (1.8, 0) {};
+    \node[node0, label=below:C] (C1) at (1.8, -1) {};
+    \node[node1, label=above:D] (D1) at (0.5, -0.5) {};
+    \node[node1, label=above:E] (E1) at (1, 0) {};
+    \node[node1, label=below:F] (F1) at (1, -1) {};
+
+    \chanSync{A1}{D1}
+    \chanSync{D1}{E1}
+    \chanSync{D1}{F1}
+    \chanFifoOne{E1}{B1}
+    \chanFifoOne{F1}{C1}
+
+    \node at (0, 0.5) {a};
+
+    \node at (2.2, -0.5) {$\sqsubseteq$};
+
+    % connector 2
+    \coordinate (off2) at (2.6, 0);
+    \node[node0, label=above:A] (A2) at ($(off2) + (0, -0.5)$) {};
+    \node[node0, label=above:B] (B2) at ($(off2) + (2.3, 0)$) {};
+    \node[node0, label=below:C] (C2) at ($(off2) + (2.3, -1)$) {};
+    \node[node1, label=above:D] (D2) at ($(off2) + (0.5, -0.5)$) {};
+    \node[node1, label=above:E] (E2) at ($(off2) + (1, 0)$) {};
+    \node[node1, label=below:F] (F2) at ($(off2) + (1, -1)$) {};
+    \node[node1, label=above:G] (G2) at ($(off2) + (1.8, 0)$) {};
+    \node[node1, label=below:H] (H2) at ($(off2) + (1.8, -1)$) {};
+
+    \chanSync{A2}{D2}
+    \chanSync{D2}{E2}
+    \chanSync{D2}{F2}
+    \chanFifoOne{E2}{G2}
+    \chanFifoOne{F2}{H2}
+    \chanSyncDrain{G2}{H2}
+    \chanSync{G2}{B2}
+    \chanSync{H2}{C2}
+
+    \node at ($(off2)+(0, 0.5)$) {b};
+
+    \node[rotate=90] at (3.9, -2) {$\equiv$};
+
+    % connector 3
+    \coordinate (off3) at (0, -3);
+    \node[node0, label=above:A] (A1) at ($(off3) + (0, -0.5)$) {};
+    \node[node0, label=above:B] (B1) at ($(off3) + (1.8, 0)$) {};
+    \node[node0, label=below:C] (C1) at ($(off3) + (1.8, -1)$) {};
+    \node[node1, label=above:D] (D1) at ($(off3) + (0.5, -0.5)$) {};
+    \node[node1, label=above:E] (E1) at ($(off3) + (1.3, 0)$) {};
+    \node[node1, label=below:F] (F1) at ($(off3) + (1.3, -1)$) {};
+
+    \chanSync{A1}{D1}
+    \chanFifoOne{D1}{E1}
+    \chanFifoOne{D1}{F1}
+    \chanSyncDrain{E1}{F1}
+    \chanSync{E1}{B1}
+    \chanSync{F1}{C1}
+
+    \node at ($(off3)+(0, 0.5)$) {c};
+
+    \node at (2.2, -3.5) {$\equiv$};
+
+    % connector 4
+    \coordinate (off4) at (3.1, -3);
+    \node[node0, label=above:A] (A1) at ($(off4) + (0, -0.5)$) {};
+    \node[node0, label=above:B] (B1) at ($(off4) + (1.3, 0)$) {};
+    \node[node0, label=below:C] (C1) at ($(off4) + (1.3, -1)$) {};
+    \node[node1, label=above:D] (D1) at ($(off4) + (0.8, -0.5)$) {};
+
+    \chanFifoOne{A1}{D1}
+    \chanSync{D1}{B1}
+    \chanSync{D1}{C1}
+
+    \node at ($(off4)+(0, 0.5)$) {d};
+
+    \end{tikzpicture}
+  \caption{Basic test case}
+  \label{fig:c1}
+\end{figure}
+
+ % Time-based test case
+\begin{figure}[htbp]
+  \centering
+    \begin{tikzpicture}[x=2cm, y=1cm]
+    \tikzstyle{node0}=[circle, draw, fill=white, inner sep=0pt, minimum size=1.5mm]
+    \tikzstyle{node1}=[circle, draw, fill=black, inner sep=0pt, minimum size=1.5mm]
+
+    % connector 1
+    \node[node0, label=above left:A] (A1) at (0, 0) {};
+    \node[node0, label=above right:B] (B1) at (1.5, 0) {};
+    \node[node1, label=above:C] (C1) at (1, 0) {};
+    \node[node1, label=below left:D] (D1) at (0, -1) {};
+    \node[node1, label=below right:E] (E1) at (1, -1) {};
+
+    \chanFifoOne{A1}{C1}
+    \chanTimert{A1}{D1}{1s}
+    \chanFifoOne{D1}{E1}
+    \chanSyncDrain{C1}{E1}
+    \chanSync{C1}{B1}
+
+    \node at (0.75, -2) {Lower Bounded FIFO1};
+
+    % connector 2
+    \coordinate (off) at (2.5, 0);
+    \node[node0, label=above left:A] (A2) at ($(off) + (0, 0)$) {};
+    \node[node0, label=above right:B] (B2) at ($(off) + (1.5, 0)$) {};
+    \node[node1, label=above:C] (C2) at ($(off) + (1, 0)$) {};
+    \node[node1, label=below left:D] (D2) at ($(off) + (0, -1)$) {};
+
+    \chanFifoOne{A2}{C2}
+    \chanTimert{A2}{D2}{1s}
+    \chanSyncDrain{C2}{D2}
+    \chanSync{C2}{B2}
+
+    \node at ($(off)+(0.75, -2)$) {Mutated Lower Bounded FIFO1};
+
+    \end{tikzpicture}
+  \caption{Time-based test case}
+  \label{fig:c2}
+\end{figure}
+
+ % Probability-based test case
+\begin{figure}[htbp]
+  \centering
+    \begin{tikzpicture}[x=2cm, y=1cm]
+    \tikzstyle{node0}=[circle, draw, fill=white, inner sep=0pt, minimum size=1.5mm]
+    \tikzstyle{node1}=[circle, draw, fill=black, inner sep=0pt, minimum size=1.5mm]
+
+    % connector 1
+    \node[node0, label=above left:A] (A1) at (0, 0) {};
+    \node[node0, label=above right:B] (B1) at (2, 0) {};
+    \node[node1, label=below:C] (C1) at (1.6, -1) {};
+    \node[node1, label=above:D] (D1) at (1.6, 0) {};
+    \node[node1, label=above:E] (E1) at (0.8, 0) {};
+
+    \chanRdmSync{A1}{E1}{$rand(0, 1)$}
+    \chanFifoOne{E1}{D1}
+    \chanTimert{E1}{C1}{1s}
+    \chanSyncDrain{C1}{D1}
+    \chanSync{D1}{B1}
+
+    \node at (1, -2) {Random tFIFO1};
+
+    % connector 2
+    \coordinate (off) at (3, 0);
+    \node[node0, label=above left:A] (A1) at ($(off) + (0, 0)$) {};
+    \node[node0, label=above right:B] (B1) at ($(off) + (2, 0)$) {};
+    \node[node1, label=below:C] (C1) at ($(off) + (0.8, -1)$) {};
+    \node[node1, label=above:D] (D1) at ($(off) + (0.8, 0)$) {};
+    \node[node1, label=above:E] (E1) at ($(off) + (1.2, 0)$) {};
+
+    \chanSync{D1}{E1}
+    \chanFifoOne{A1}{D1}
+    \chanTimert{A1}{C1}{1s}
+    \chanSyncDrain{C1}{D1}
+    \chanRdmSync{E1}{B1}{$rand(0, 1)$}
+
+    \node at ($(off)+(1, -2)$) {Mutated Random tFIFO1};
+
+    \end{tikzpicture}
+  \caption{Probability-based test case}
+  \label{fig:c3}
+\end{figure}
+
+
+
+
 
 \subsection{Refinement checking}
 
