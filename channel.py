@@ -220,7 +220,7 @@ class Channel:
 
     # Probabilistic
     @staticmethod
-    def CptSync(p):
+    def dang(p):
         def CptSyncInstance(nodes, bound):
             assert len(nodes) == 2
             assert 0 <= p <= 1

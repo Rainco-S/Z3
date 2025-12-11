@@ -6,7 +6,9 @@
 \usepackage{soul}
 \usepackage{graphicx}
 \usepackage{tikz}
+\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
 
+\SetKwProg{Let}{let}{be:}{}
 \input{tikz_template}
 
 \bibliographystyle{splncs03}
@@ -14,8 +16,8 @@
 
 \begin{document}
 
-\title{Connectors: Refinement and test case generation using Z3}
-\titlerunning{Connectors: Refinement and test case generation using Z3}
+\title{Connectors as designs: Refinement and test case generation using Z3}
+\titlerunning{Connectors as designs: Refinement and test case generation using Z3}
 \author{Sihan Wu\inst{1} \and Xueyi Tan\inst{2}}
 \authorrunning{S. Wu and X. Tan}
 \tocauthor{Wu, Tan}
@@ -139,7 +141,7 @@ The occurrence (i.e., taking or writing) of a data item at some node of a connec
 Z3 \cite{10.1007/978-3-540-78800-3_24} if an efficient SMT (Satisfiability Modulo Theories) solver freely available from Microsoft. It has been used in various software verification and analysis applications. Z3 expands to deciding the satisfiability (or dully the validity) of first order formulas with respect to combinations of theories such as: arithmetic, bit-vectors, arrays, and uninterpreted functions. Given the data and time constraints of connectors, it allows us to verify the satisfiability of properties or refinement relations. Z3 provides bindings for several programming languages. In this paper, we use \textit{Z3 python-bindings} to construct the models and carry out refinement checking.
 
 
-\section{Modeling Connectors}
+\section{Modeling Connectors in UTP}
 Since we aim at specifying both finite and infinite behavior of connectors, we use relations on timed data sequences to model connectors. In the following, we assume that all timed data sequences are finite. However, the semantic definition can be easily generalized to infinite sequences, which are timed data streams as proposed in \cite{arbab2002coinductive}. We use $\mathcal{D}$ for a predicate of well-defined timed data sequence types. In other words, we define the behavior only for valid sequences expressed via a predicate $\mathcal{D}$. Then, every connector \textbf{R} can be represented by the design $P(in_\textbf{R})\vdash Q(in_\textbf{R},out_\textbf{R})$ as follows:
 \[
 \begin{split}
@@ -267,6 +269,22 @@ a\bowtie b\equiv a=()\lor b=()\lor\left(a(0)\neq b(0)\lor\begin{cases}
 
 The \textbf{asynchronous drain} channel $A\to\leftarrow B$ inputs two sequences of data items at its two input (source) ends, but the data items on the two ends are never delivered at the same time. Moreover, the \textbf{synchronous spout} channel $A\leftarrow\mapsto B$ has two sink ends, and outputs data sequence simultaneously, i.e., the two ends must deliver data items at the same time. Similar to the definition for synchronous drain and asynchronous spout, we can easily derive the design models for asynchronous drain and synchronous spout channels as well, which we skip here.
 
+\subsection{Probabilistic connectors}
+The specification of channels with probabilistic behavior can be captured by the disjunction or conjunction of different predicates about time and data distributions. We consider four types of probabilistic channels: \textit{message-corrupting synchronous channel}, \textit{randomized synchronous channel}, \textit{probabilistic lossy synchronous channel}, and \textit{faulty FIFO1 channel}. Specifications of other primitive channels are ignored here and can be found at \cite{Prob_Reo}.
+
+\subsubsection{CptSync:}
+The message-corrupting synchronous channel $A\xrightarrow{p}B$ is a synchronous channel which has an extra parameter $p$ compared with the primitive synchronous channel. The delivered message can be corrupted with probability $p$. Hence, if a data item flows into the channel through the source end, then the correct data value will be obtained at the sink end with probability $1-p$ and a corrupted data value $\perp$ will be obtained with probability $p$.
+
+\subsubsection{RandomSync:}
+The randomized synchronous channel $A\xrightarrow{rand(0,1)}B$ can generate a random number $b\in\{0,1\}$ with equal probability when it is activated through an arbitrary write operation on its source end, and this random number will be taken on the sink end simultaneously.
+
+\subsubsection{ProbSync:}
+The message transmitted by the probabilistic synchronous channel $A-\overset{q}{-}\to B$ can get lost with a certain probability $q$. It can also act like a \textit{Sync} channel and the message will be delivered successfully with probability $1-q$.
+
+\subsubsection{FaultyFIFO1:}
+The messages flowing into a faulty FIFO1 channel $A\overset{r}{\cdots}{\setlength{\fboxsep}{1pt}\fbox{\vphantom{x}\hphantom{X}}}\to B$ can get lost with probability $r$ when it is inserted into the buffer. In this case, the buffer remains empty. It can also behave as a normal \textit{FIFO1} channel when the insertion of data into the buffer is successful with probability $1-r$.\par
+Another kind of faulty FIFO1 channel named LossyFIFO1 channel $A\to{\setlength{\fboxsep}{1pt}\fbox{\vphantom{x}\hphantom{X}}}\overset{r}{\cdots}B$ works perfectly on the insertion of data item into its buffer but may loose messages from the buffer before being taken on the sink end. The difference between this channel and FtyFIFO1 is that the loss of data items happens in different steps. Loss behavior in this channel arises in the process of being taken from the buffer, while loss behavior in FtyFIFO1 arises in the process of storage into the buffer.
+
 \subsection{Timer connectors}
 We now describe the design models of a few timer channels in Reo that can serve to measure the time between two events and produce timeout signals.
 \subsubsection{t-Timer:}
@@ -326,63 +344,102 @@ where $ET(\langle\alpha,a\rangle,\langle\beta,b\rangle)\equiv$
 \end{cases}
 \]
 
-\subsection{Probabilistic connectors}
-The specification of channels with probabilistic behavior can be captured by the disjunction or conjunction of different predicates about time and data distributions. We consider four types of probabilistic channels: \textit{message-corrupting synchronous channel}, \textit{randomized synchronous channel}, \textit{probabilistic lossy synchronous channel}, and \textit{faulty FIFO1 channel}. Specifications of other primitive channels are ignored here and can be found at \cite{Prob_Reo}.
-
-\subsubsection{CptSync:}
-The message-corrupting synchronous channel $A\xrightarrow{p}B$ is a synchronous channel which has an extra parameter $p$ compared with the primitive synchronous channel. The delivered message can be corrupted with probability $p$. Hence, if a data item flows into the channel through the source end, then the correct data value will be obtained at the sink end with probability $1-p$ and a corrupted data value $\perp$ will be obtained with probability $p$.
-\[
-\begin{split}
-    \textbf{con}:&\textbf{CptSync}p(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
-    \textbf{pre}:&\mathcal{D}\langle\alpha,a\rangle\\
-    \textbf{post}:&\mathcal{D}\langle\beta,b\rangle\land b=a\land\forall i<|a|.\\
-    &((\beta(i).data=\alpha(i).data\land\beta(i).prob=\alpha(i).prob\cdot(1-p))\lor\\
-    &(\beta(i).data=corrupted\land\beta(i).prob=\alpha(i).prob\cdot p))
-\end{split}
-\]
-
-\subsubsection{RandomSync:}
-The randomized synchronous channel $A\xrightarrow{rand(0,1)}B$ can generate a random number $b\in\{0,1\}$ with equal probability when it is activated through an arbitrary write operation on its source end, and this random number will be taken on the sink end simultaneously.
-\[
-\begin{split}
-    \textbf{con}:&\textbf{RdmSync}(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
-    \textbf{pre}:&\mathcal{D}\langle\alpha,a\rangle\\
-    \textbf{post}:&\mathcal{D}\langle\beta,b\rangle\land b=a\land\forall i<|\beta|.\\
-    &((\beta(i).data=0\land\beta(i).prob=1/2)\lor\\
-    &(\beta(i).data=1\land\beta(i).prob=1/2))
-\end{split}
-\]
-
-\subsubsection{ProbSync:}
-The message transmitted by the probabilistic synchronous channel $A-\overset{q}{-}\to B$ can get lost with a certain probability $q$. It can also act like a \textit{Sync} channel and the message will be delivered successfully with probability $1-q$.
-\[
-\begin{split}
-    \textbf{con}:&\textbf{ProbLossy}q(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
-    \textbf{pre}:&\mathcal{D}\langle\alpha,a\rangle\\
-    \textbf{post}:&\mathcal{D}\langle\beta,b\rangle\land PL(\langle\alpha,a\rangle,\langle\beta,b\rangle,q)
-\end{split}
-\]
-where $PL(\langle\alpha,a\rangle,\langle\beta,b\rangle,q)\equiv$
-\[
-\begin{cases}
-    \langle\beta,b\rangle=\langle(),()\rangle & \text{if }\langle\alpha,a\rangle=\langle(),()\rangle\\
-    PL(\langle\alpha^{(1)},a^{(1)}\rangle,\langle\beta,b\rangle,q)\lor(PL(\langle\alpha^{(1)},a^{(1)}\rangle,\langle\beta^{(1)},b^{(1)}\rangle,q)\land & \text{else} \\
-    |\beta|>0\land\alpha(0).data=\beta(0)\land \beta(0).prob=\alpha(0).prob\cdot(1-q))
-\end{cases}
-\]
-
-\subsubsection{FaultyFIFO1:}
-The messages flowing into a faulty FIFO1 channel $A\overset{r}{\cdots}{\setlength{\fboxsep}{1pt}\fbox{\vphantom{x}\hphantom{X}}}\to B$ can get lost with probability $r$ when it is inserted into the buffer. In this case, the buffer remains empty. It can also behave as a normal \textit{FIFO1} channel when the insertion of data into the buffer is successful with probability $1-r$.\par
-Another kind of faulty FIFO1 channel named LossyFIFO1 channel $A\to{\setlength{\fboxsep}{1pt}\fbox{\vphantom{x}\hphantom{X}}}\overset{r}{\cdots}B$ works perfectly on the insertion of data item into its buffer but may loose messages from the buffer before being taken on the sink end. The difference between this channel and FtyFIFO1 is that the loss of data items happens in different steps. Loss behavior in this channel arises in the process of being taken from the buffer, while loss behavior in FtyFIFO1 arises in the process of storage into the buffer.
-
-\subsection{Composing connectors}
-
-\subsection{Refinement of connectors}
-
 
 \section{Refinement checking and test case generation in Z3}
-\subsection{Test case for connectors}
+As shown previously, modeling and reasoning of Reo connectors in UTP allows us to reason about a relatively wide range of properties. However, when dealing with verification of refinement/equivalence relations between connectors, it is only capable of proving that one connector is indeed a refinement of the other one but cannot automatically provide a counter example when one connector is not a refinement of the other connector. Moreover, the refinement relation is a fairly important part of properties, which has been investigated in many applications. When we fail to find a proof of the existence of refinement relations between connectors, we propose to use Z3, an SMT solver, to search for bounded counter examples. If a counter example is successfully located, it means that there is no refinement relation between the connectors.
+\subsection{Formalization of channels in Z3}
+\label{sec:z3chan}
+We first need to implement the construction of connectors and also define the refinement checking function in a way that fits Z3. Typically, connector construction starts with the formal definition of channels and composition operators, which will be used hereafter to build and assess more complex models. Such a framework must be carefully developed so that the further model assessment can be simplified as much as possible.\par
+Coinciding with the definition of channels in UTP, we dealt with both time and data relation constraints in the basic definition in Z3. A table with correspondence between basic definitions in UTP and Z3 can be found at \cite{Z3}.\par
+An auxiliary functionConjunctionis used to take the conjunction of every constraint in the constraint lists param-eterized by constraints. For example, the specific behavior constraints for Syncchannel are classified into two types: data constraints and time constraints. The definition of Syncprovides the behavior pattern it needs to follow: each item in timed data streams of output specified as “node[1]” is equivalent to the timed data items of input specified as “node[0]”, which are exactly data and time constraints. As they are both requirements that we need to satisfy no matter data or time is related, each constraint in the list will all be combined finally.\par
+Since we have already defined the behavior constraints for channels with UTP, now we take the \textit{Sync} channel as an example to show the code of defining them in Z3.
+\begin{verbatim}
+def Sync(nodes, bound)
+    assert len(nodes) == 2
+    constraints = []
+    for i in range(bound):
+        constraints += [nodes[0]['data'][i]==nodes[1]['data'][i]]
+        constraints += [nodes[0]['time'][i]==nodes[1]['time'][i]]
+    return Conjunction(constraints)
+\end{verbatim}
+\textit{SyncDrain} channel is defined in a similar way. On the basis of the behavior of SyncDrainchannel, only time related constraints are needed, i.e., equivalence of corresponding items in two time streams of the two inputs.\par
+The remaining basic channels are omitted here. For the construction of probabilistic channels, we adopted a method that involves generating a random number between 0 and 1 and comparing it with the corresponding probability. Specifically, for the \textit{CptSync} channel, given the probability $p$ of data corruption, we generate a random float number $q$. If $q$ is less than $p$, the data is judged as corrupted; otherwise, the data is successfully transmitted.
+% 这里你补充一些你在Z3里定义timer channels时的特殊之处或者一些basic里面体现不出来的部分。
 
+\subsection{Composing operators}
+While the basic channels are already well defined as the basis of the whole construction framework, the composition operators also need to be specified for large-scale connectors' construction just like cement for bricks. There are three kinds of composition operators: \textit{replicate}, \textit{flow-through}, and \textit{merge}.\par
+Both \textit{replicate} and \textit{flow-through} perators can be implicitly achieved when we compose channels to construct connec-tors using same node names. A simple example for the implementation of \textit{flow-through} is \verb|c1.connect('Sync', 'A', 'E')|, \verb|c1.connect('Fifo1', 'E', 'F')|, \verb|c1.connect('Fifo1', 'E', 'G')| where the message that nodeEreceives fromAis duplicated and sent toFandGsimultaneously. As for \textit{Flow-through}operator, a simple example is \verb|c2.connect('Fifo1', 'A', 'D')|, \verb|c2.connect('Sync', 'D', 'B')| where the timed data stream flows from nodeAto nodeBthrough the mixed node D. In these two examples, \verb|c1| and \verb|c2| both belong to the \verb|Connector| class which will be elaborated in detail later.\par
+Among the three types of composition operators, the most difficult one is \textit{Merge}, which is specially dealt with as a channel \textit{Merger} in our model. Together with the other two kinds of composition operators: \textit{replicate} and \textit{flow-through}, they provide a complete basis for the construction of any connector, coinciding with the original set of composition operations \cite{Reo}, \cite{MENG2012799}. For each item in the output stream of the \textit{Merger} channel, there is a non-deterministic choice between the two input nodes. Hence, the \textit{Merger} channel also needs to be defined in a recursive way like the \textit{LossySync} channel. Note that the constraints also conform well to the original semantics of the \textit{merge} operator. Derived from the two recursive definitions, an additional advantage of defining \textit{LossySync} and \textit{Merger} channel in this way is that it can preserve the behavioral pattern to a great extent without any assumption such as priorities of reading or taking data from the two input streams.
+% 好像地方不够了，暂且先放着吧
+% \begin{verbatim}
+% def Merger(nodes, bound):
+%     assert len(nodes) >= 3
+%     def MultiMergerInstance(Index = [0 for _ in range(len(nodes) - 1)]):
+%         if bound == sum(Index):
+%             return True
+%         constraints = []
+%         for i in range(len(nodes) - 1):
+%             temp = []
+%             temp += [nodes[i]['data'][Index[i]] == nodes[-1]['data'][sum(Index)]]
+%             temp += [nodes[i]['time'][Index[i]] == nodes[-1]['time'][sum(Index)]]
+%             for j in range(len(nodes) - 1):
+%                 if j != i:
+%                     temp += [nodes[i]['time'][Index[i]] < nodes[j]['time'][Index[j]]]
+%             constraints += [temp]
+%         return Disjunction([And(Conjunction(constraints[i]), MultiMergerInstance(Index[:i] + [Index[i] + 1] + Index[i + 1:])) for i in range(len(nodes) - 1)])
+%     return MultiMergerInstance()
+% \end{verbatim}
+
+\subsection{Refinement and test case for connectors}
+\label{sec:Refinement}
+
+
+\subsection{Refinement checking}
+With the above basic channels and composition operators, the next step is to construct Reo connectors in this framework. In our model, \verb|Connector| is defined as a class, which provides a method for constructing complex connectors out of the basic channels and composition operators. The statements inside the class definition are function definitions.\par
+The \verb|isRefinementOf| function is used to express refinement checking. The result type of the function of Boolean, which shows whether or not a connector is a refinement of another. According to the definition of refinement relation in Section \ref{sec:Refinement}, we have a formula that represents it properly: $P\sqsubseteq Q$ if and only if the behavior property of connector $P$ can be derived from the property of connector $Q$, i.e., $Q\to P$. If $Q$ is indeed a refinement of $P$, it can be rephrased as $\lnot Q\lor P$. If Z3 solver presents a model satisfying the negation of this formula, then the refinement relation is falsified by a counter example. On the contrary, if there doesn't exist a counter example within a given bound, we say that the refinement relation, $P\sqsubseteq Q$, holds within the bound. The formal definition of \verb|isRefinementOf| is given in Algorithm \ref{alg:refinement}. The complete definition of the function can be found at \cite{Z3}.\par
+Algorithm \ref{alg:refinement} cannot produce any spurious counter examples, i.e. all the counter examples of the bounded model located by the algorithm are also correct counter examples of the original model. To illustrate this conclusion, first we assume the bound we set is $b$, for any channel, the constraints added to Z3 solver are bounded, i.e., only constraints on the prefixes of timed data streams are fed to Z3. Let $\Sigma$ be the set of all constraints of connectors and $\sigma$ be the set of bounded ones. If there exists a counter example $\pi$ ($\pi$ is a set of timed data streams' prefixed corresponding to the nodes) that fails to satisfy the weaker constraints: $\pi\not\models\sigma$, then we can deduce that $\pi\not\models\Sigma$. Let $\pi$ be a prefix of the full timed data stream $\Pi$ and $\Pi\setminus\pi$ satisfies all the left constraints $\Sigma\setminus\sigma$. A valid prefix leads to a valid timed data stream, hence we have $\Pi\not\models\Sigma$. Thus, the counter examples generated by Algorithm \ref{alg:refinement} are always sound and genuine.
+\begin{algorithm}[htbp]
+\caption{Q.isRefinementOf(P, bound).}
+\label{alg:refinement}
+\KwIn{Both P and Q are connectors.}
+\KwOut{A boolean result: \texttt{True} or \texttt{False} with a counter example}
+\texttt{solver} $\leftarrow$ create a Z3 Solver instance\;
+\texttt{nodes} $\leftarrow$ \{\}\;
+\For{\texttt{ch}$\leftarrow$ channels in Q}{
+    \For{$n\leftarrow$ channel ends in \texttt{ch}}{
+        \If{$n\not\in$ \texttt{nodes}}{
+            $tds_n\leftarrow\{time:[n\_t\_0,\cdots,n\_t\_(bound-1)],data:[n\_d\_0,\cdots\_(bound-1)]\}$\;
+            \texttt{nodes[n]}$\leftarrow tds_n$\;
+            add time constraints $n\_t\_0\geq0\land n\_t\_i<n\_t\_i+1$ to \texttt{solver}
+        }
+    }
+    add channel-specific constraints to \texttt{solver} according to the definition in Section \ref{sec:z3chan}
+}
+\texttt{foralls} $\leftarrow$ \{\}\;
+\texttt{absGlobalConstr} $\leftarrow$ \{\}\;
+\texttt{absTimeConstr} $\leftarrow$ \{\}\;
+\For{\texttt{ch}$\leftarrow$ channels in P}{
+    \For{$n\leftarrow$ channel ends in \texttt{ch}}{
+        \If{$n\not\in$ \texttt{nodes}$\cup$ \texttt{foralls}}{
+            $tds_n\leftarrow\{time:[n\_t\_0,\cdots,n\_t\_(bound-1)],data:[n\_d\_0,\cdots\_(bound-1)]\}$\;
+            \texttt{foralls[n]}$\leftarrow tds_n$\;
+            add time constraints $n\_t\_0\geq0\land n\_t\_i<n\_t\_i+1$ to \texttt{absTimeConstr}
+        }
+    }
+    add channel-specific constraints to \texttt{absTimeConstr} according to the definition in Section \ref{sec:z3chan}
+}
+\texttt{absGlobalConstr}$\leftarrow\lnot($\texttt{absTimeConstr}$\cap$\texttt{absGlobalConstr})\;
+\Let{\texttt{foralls} }{
+    \{$n_1,\cdots,n_m$\}, add the following constraint to \texttt{solver}
+    $(\forall n_1\_t\_0)\cdots(\forall n_1\_t\_(bound-1))(\forall n_1\_d\_0)\cdots(\forall n_1\_d\_(bound-1))\cdots$
+    $(\forall n_m\_t\_0)\cdots(\forall n_m\_t\_(bound-1))(\forall n_m\_d\_0)\cdots(\forall n_m\_d\_(bound-1))$\texttt{absGlobalConstr}
+}
+\texttt{solver.check()}
+\end{algorithm}
+
+\begin{example}
+    1
+\end{example}
 \begin{figure}[htbp] % Basic test case
   \centering
     \begin{tikzpicture}[x=2cm, y=1cm]
@@ -469,6 +526,9 @@ Another kind of faulty FIFO1 channel named LossyFIFO1 channel $A\to{\setlength{\
   \label{fig:c1}
 \end{figure}
 
+\begin{example}
+    2
+\end{example}
  % Time-based test case
 \begin{figure}[htbp]
   \centering
@@ -510,6 +570,9 @@ Another kind of faulty FIFO1 channel named LossyFIFO1 channel $A\to{\setlength{\
   \label{fig:c2}
 \end{figure}
 
+\begin{example}
+    3
+\end{example}
  % Probability-based test case
 \begin{figure}[htbp]
   \centering
@@ -554,10 +617,6 @@ Another kind of faulty FIFO1 channel named LossyFIFO1 channel $A\to{\setlength{\
 \end{figure}
 
 
-
-
-
-\subsection{Refinement checking}
 
 
 

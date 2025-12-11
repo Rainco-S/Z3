@@ -1,7 +1,8 @@
 \relax 
 \bibstyle{splncs03}
 \citation{Reo}
-\@writefile{toc}{\contentsline {title}{Connectors: Refinement and test case generation using Z3}{1}{}\protected@file@percent }
+\providecommand \oddpage@label [2]{}
+\@writefile{toc}{\contentsline {title}{Connectors as designs: Refinement and test case generation using Z3}{1}{}\protected@file@percent }
 \@writefile{toc}{\authcount {2}}
 \@writefile{toc}{\contentsline {author}{Wu, Tan}{1}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{}\protected@file@percent }
@@ -19,7 +20,7 @@
 \citation{10.1007/978-3-540-78800-3_24}
 \citation{arbab2002coinductive}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Z3}{6}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3}Modeling Connectors}{7}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Modeling Connectors in UTP}{7}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Basic connectors}{7}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{Sync:}{7}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{FIFO1:}{7}{}\protected@file@percent }
@@ -29,39 +30,48 @@
 \@writefile{toc}{\contentsline {subsubsection}{Filter:}{9}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{p-Producer:}{9}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{AsynSpout:}{9}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Timer connectors}{10}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{t-Timer:}{10}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Off-Timer}{10}{}\protected@file@percent }
 \citation{Prob_Reo}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Probabilistic connectors}{10}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{CptSync:}{10}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{RandomSync:}{10}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{ProbSync:}{10}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{FaultyFIFO1:}{10}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Timer connectors}{11}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{t-Timer:}{11}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Off-Timer}{11}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{Reset-Timer}{11}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Expire-Timer}{11}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Probabilistic connectors}{11}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{CptSync:}{11}{}\protected@file@percent }
+\citation{Z3}
+\@writefile{toc}{\contentsline {subsubsection}{Expire-Timer}{12}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Refinement checking and test case generation in Z3}{12}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Formalization of channels in Z3}{12}{}\protected@file@percent }
+\newlabel{sec:z3chan}{{4.1}{12}{}{}{}}
+\citation{Reo}
+\citation{MENG2012799}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Composing operators}{13}{}\protected@file@percent }
+\citation{Z3}
 \citation{*}
 \bibdata{reference}
-\bibcite{Prob_Reo}{1}
-\@writefile{toc}{\contentsline {subsubsection}{RandomSync:}{12}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{ProbSync:}{12}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{FaultyFIFO1:}{12}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Basic test case}}{13}{}\protected@file@percent }
-\newlabel{fig:c1}{{1}{13}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Time-based test case}}{13}{}\protected@file@percent }
-\newlabel{fig:c2}{{2}{13}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Probability-based test case}}{13}{}\protected@file@percent }
-\newlabel{fig:c3}{{3}{13}{}{}{}}
-\bibcite{Reo}{2}
-\bibcite{arbab2002coinductive}{3}
-\bibcite{hoare1997unified}{4}
-\bibcite{Meng12}{5}
-\bibcite{MENG2012799}{6}
-\bibcite{10.1007/978-3-540-78800-3_24}{7}
-\bibcite{10.1007/978-3-030-31517-7_5}{8}
-\bibcite{Sun2018TowardsFM}{9}
-\bibcite{woodcock2024uncertainty}{10}
-\bibcite{ZHANG201927}{11}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Composing connectors}{14}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Refinement of connectors}{14}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}Refinement checking and test case generation in Z3}{14}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Test case for connectors}{14}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Refinement checking}{14}{}\protected@file@percent }
-\gdef \@abspage@last{14}
+\bibcite{Z3}{1}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Refinement and test case for connectors}{14}{}\protected@file@percent }
+\newlabel{sec:Refinement}{{4.3}{14}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Refinement checking}{14}{}\protected@file@percent }
+\@writefile{loa}{\contentsline {algocf}{\numberline {1}{\ignorespaces Q.isRefinementOf(P, bound).}}{15}{}\protected@file@percent }
+\newlabel{alg:refinement}{{1}{15}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Basic test case}}{16}{}\protected@file@percent }
+\newlabel{fig:c1}{{1}{16}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Time-based test case}}{16}{}\protected@file@percent }
+\newlabel{fig:c2}{{2}{16}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Probability-based test case}}{16}{}\protected@file@percent }
+\newlabel{fig:c3}{{3}{16}{}{}{}}
+\bibcite{Prob_Reo}{2}
+\bibcite{Reo}{3}
+\bibcite{arbab2002coinductive}{4}
+\bibcite{hoare1997unified}{5}
+\bibcite{Meng12}{6}
+\bibcite{MENG2012799}{7}
+\bibcite{10.1007/978-3-540-78800-3_24}{8}
+\bibcite{10.1007/978-3-030-31517-7_5}{9}
+\bibcite{Sun2018TowardsFM}{10}
+\bibcite{woodcock2024uncertainty}{11}
+\bibcite{ZHANG201927}{12}
+\gdef \@abspage@last{17}
