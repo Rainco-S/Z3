@@ -5,6 +5,7 @@
 \usepackage{amssymb}
 \usepackage{soul}
 \usepackage{graphicx}
+\usepackage{seqsplit}
 \usepackage{tikz}
 \usepackage[ruled,vlined,linesnumbered]{algorithm2e}
 
@@ -368,7 +369,7 @@ The remaining basic channels are omitted here. For the construction of probabili
 
 \subsection{Composing operators}
 While the basic channels are already well defined as the basis of the whole construction framework, the composition operators also need to be specified for large-scale connectors' construction just like cement for bricks. There are three kinds of composition operators: \textit{replicate}, \textit{flow-through}, and \textit{merge}.\par
-Both \textit{replicate} and \textit{flow-through} perators can be implicitly achieved when we compose channels to construct connec-tors using same node names. A simple example for the implementation of \textit{flow-through} is \verb|c1.connect('Sync', 'A', 'E')|, \verb|c1.connect('Fifo1', 'E', 'F')|, \verb|c1.connect('Fifo1', 'E', 'G')| where the message that nodeEreceives fromAis duplicated and sent toFandGsimultaneously. As for \textit{Flow-through}operator, a simple example is \verb|c2.connect('Fifo1', 'A', 'D')|, \verb|c2.connect('Sync', 'D', 'B')| where the timed data stream flows from nodeAto nodeBthrough the mixed node D. In these two examples, \verb|c1| and \verb|c2| both belong to the \verb|Connector| class which will be elaborated in detail later.\par
+Both \textit{replicate} and \textit{flow-through} perators can be implicitly achieved when we compose channels to construct connec-tors using same node names. A simple example for the implementation of \textit{flow-through} is \verb|c1.connect('Sync', 'A', 'E')|, \verb|c1.connect('Fifo1', 'E', 'F')|, \verb|c1.connect('Fifo1', 'E', 'G')| where the message that node $E$ receives from $A$ is duplicated and sent to $F$ and $G$ simultaneously. As for \textit{Flow-through} operator, a simple example is \texttt{\seqsplit{c2.connect('Fifo1', 'A', 'D')}}, \verb|c2.connect('Sync', 'D', 'B')| where the timed data stream flows from node $A$ to node $B$ through the mixed node $D$. In these two examples, \verb|c1| and \verb|c2| both belong to the \verb|Connector| class which will be elaborated in detail later.\par
 Among the three types of composition operators, the most difficult one is \textit{Merge}, which is specially dealt with as a channel \textit{Merger} in our model. Together with the other two kinds of composition operators: \textit{replicate} and \textit{flow-through}, they provide a complete basis for the construction of any connector, coinciding with the original set of composition operations \cite{Reo}, \cite{MENG2012799}. For each item in the output stream of the \textit{Merger} channel, there is a non-deterministic choice between the two input nodes. Hence, the \textit{Merger} channel also needs to be defined in a recursive way like the \textit{LossySync} channel. Note that the constraints also conform well to the original semantics of the \textit{merge} operator. Derived from the two recursive definitions, an additional advantage of defining \textit{LossySync} and \textit{Merger} channel in this way is that it can preserve the behavioral pattern to a great extent without any assumption such as priorities of reading or taking data from the two input streams.
 % 好像地方不够了，暂且先放着吧
 % \begin{verbatim}
@@ -390,15 +391,50 @@ Among the three types of composition operators, the most difficult one is \texti
 %     return MultiMergerInstance()
 % \end{verbatim}
 
-\subsection{Refinement and test case for connectors}
+\subsection{Refinement and test cases for connectors}
 \label{sec:Refinement}
+\subsubsection{Refinement and equivalence}
+A refinement relation between connectors which allows developing connectors systematically in a step-wise fashion, may help to bridge the gap between requirements and the final implementations. The notion of refinement has been widely used in different system descriptions. For example, in data refinement \cite{de1998data}, the ‘concrete’ model is required to have \textit{enough redundancy} to represent all the elements of the ‘abstract’ one. This is captured by the definition of a surjection from the former into the latter (the \textit{retrieve map}). If models are specified in terms of pre and post-conditions, the former are weakened and the latter strengthened under refinement \cite{jones1986systematic}. In process algebra, refinement is usually discussed in terms of several ‘observation’ preorders, and most of them justify transformations entailing \textit{reduction of nondeterminism} (see, for example, \cite{roscoe1998theory}). For, the refinement relation can be defined as in \cite{MENG2012799}, where a proper refinement order over connectors has been established based on the implication relation on predicates.\par
+Connector $Q$ is a refinement of another connector $P$ if the behavior property of $P$ can be derived from hypothesis $Q$, i.e., the behavior property of connector $Q$ (denoted by $P\sqsubseteq Q$). Two connectors are equivalent if each one of them is a refinement of the other.
+\begin{definition}[Refinement]
+    For two connectors \textbf{R}$_1$ and \textbf{R}$_2$
+    \[
+    \begin{split}
+        \textbf{con}&:\textbf{R}_i(in:in_{\textbf{R}_i};out:out_{\textbf{R}_i})\\
+        \textbf{pre}&:P_i(in_{\textbf{R}_i})\\
+        \textbf{post}&:Q_i(in_{\textbf{R}_i},out_{\textbf{R}_i})
+    \end{split}
+    \]
+    where $i=1,2$, then$$\textbf{R}_1\sqsubseteq\textbf{R}_2=_{df}(P_1\Rightarrow P_2)\land(P_1\land Q_2\Rightarrow Q_1)$$
+\end{definition}
 
+\subsubsection{Test cases for connectors}
+In this section, we discuss the problem of \textit{fault-based test case} for component connectors with Reo as our target implementation language. The idea is to test against such coordination or protocol problems. The Reo circuit serves as a specification model representing the expected coordination among a set of components. A number of mutated Reo circuits represent the fault models encoding situations of what can go wrong. A refinement checker will generate counter-examples distinguishing the correct from the mutated (faulty) behavior. From this counterexample a test case is generated and executed on the implementation. Each test case will prevent that the mutated coordination model has been implemented. Hence, the test cases cover certain faults modeled at the specification level. This is why the approach is called fault-based. In the following, we expand on this idea and present the theory our test case generator is build on.\par
+For a connector, we consider test cases as specifications that define the expected timed data sequences on the output nodes of the connector, for given timed data sequences on the input nodes of the connector.
+\begin{definition}[Deterministic Test Case]
+    For a connector \textbf{R}$(in:in_{\textbf{R}};out:out_{\textbf{R}})$, let $i$ be the input and $o$ be the output, both are mapping from set of node names to timed data sequences with the same domains as $in_{\textbf{R}}$ and $out_{\textbf{R}}$ respectively. A deterministic test case for \textbf{R} is defined as
+    $$t_d(in_{\textbf{R}},out_{\textbf{R}})=(in_{\textbf{R}}=i)\vdash(out_{\textbf{R}}=o)$$
+\end{definition}
+Sometimes the behavior of a connector can be non-deterministic. In this case, we can generalize the notion of test case as
+follows:
+\begin{definition}[Test Case]
+    For a connector \textbf{R}$(in:in_{\textbf{R}};out:out_{\textbf{R}})$, let $i$ be the input and $O$ be a possibly infinite set containing the expected output(s). Both $i$ and any $o\in O$ are mapping from set of node names to timed data sequences with the same domains as $in_{\textbf{R}}$ and $out_{\textbf{R}}$ respectively. A deterministic test case for \textbf{R} is defined as
+    $$t_d(in_{\textbf{R}},out_{\textbf{R}})=(in_{\textbf{R}}=i)\vdash out_{\textbf{R}}\in O$$
+\end{definition}
+From the previous discussion, we know that test cases, as well as connector specifications and implementations, can be specified by designs. Taking specifications into consideration, test cases should be abstractions of a specification if they are properly derived from the specification. It is obvious that an implementation that is correct with respect to its specification should refine its specification. Therefore, an implementation is a refinement of test cases if and only if the implementation is correct, then it should pass the test cases.\par
+Finding a test case t that detects a given fault is the central strategy in fault-based testing. For a connector, a fault-based
+test case is defined as follows:
+\begin{definition}[Fault-Adequeate Test Case]
+    Let $t_d(in_{\textbf{R}},out_{\textbf{R}})$ be a test case (which can be either deterministic or non-deterministic), \textbf{R} an expected connector, and \textbf{R}' its faulty implementation. Then $t$ is a fault-adequate test case if and only if
+    $$t\sqsubseteq\textbf{R}\land t\not\sqsubseteq \textbf{R}'$$
+\end{definition}
+A fault-adequate test case detects a fault in \textbf{R}'. Alternatively, we can say that the test case distinguishes \textbf{R} and \textbf{R}'. All test cases that detect a certain fault form a fault-adequate equivalence class.
 
 \subsection{Refinement checking}
 With the above basic channels and composition operators, the next step is to construct Reo connectors in this framework. In our model, \verb|Connector| is defined as a class, which provides a method for constructing complex connectors out of the basic channels and composition operators. The statements inside the class definition are function definitions.\par
 The \verb|isRefinementOf| function is used to express refinement checking. The result type of the function of Boolean, which shows whether or not a connector is a refinement of another. According to the definition of refinement relation in Section \ref{sec:Refinement}, we have a formula that represents it properly: $P\sqsubseteq Q$ if and only if the behavior property of connector $P$ can be derived from the property of connector $Q$, i.e., $Q\to P$. If $Q$ is indeed a refinement of $P$, it can be rephrased as $\lnot Q\lor P$. If Z3 solver presents a model satisfying the negation of this formula, then the refinement relation is falsified by a counter example. On the contrary, if there doesn't exist a counter example within a given bound, we say that the refinement relation, $P\sqsubseteq Q$, holds within the bound. The formal definition of \verb|isRefinementOf| is given in Algorithm \ref{alg:refinement}. The complete definition of the function can be found at \cite{Z3}.\par
 Algorithm \ref{alg:refinement} cannot produce any spurious counter examples, i.e. all the counter examples of the bounded model located by the algorithm are also correct counter examples of the original model. To illustrate this conclusion, first we assume the bound we set is $b$, for any channel, the constraints added to Z3 solver are bounded, i.e., only constraints on the prefixes of timed data streams are fed to Z3. Let $\Sigma$ be the set of all constraints of connectors and $\sigma$ be the set of bounded ones. If there exists a counter example $\pi$ ($\pi$ is a set of timed data streams' prefixed corresponding to the nodes) that fails to satisfy the weaker constraints: $\pi\not\models\sigma$, then we can deduce that $\pi\not\models\Sigma$. Let $\pi$ be a prefix of the full timed data stream $\Pi$ and $\Pi\setminus\pi$ satisfies all the left constraints $\Sigma\setminus\sigma$. A valid prefix leads to a valid timed data stream, hence we have $\Pi\not\models\Sigma$. Thus, the counter examples generated by Algorithm \ref{alg:refinement} are always sound and genuine.
-\begin{algorithm}[htbp]
+\begin{algorithm}
 \caption{Q.isRefinementOf(P, bound).}
 \label{alg:refinement}
 \KwIn{Both P and Q are connectors.}

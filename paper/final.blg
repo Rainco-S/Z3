@@ -9,46 +9,48 @@ Warning--entry type for "Z3" isn't style-file defined
 --line 55 of file reference.bib
 Warning--to sort, need author or key in Prob_Reo
 Warning--to sort, need author or key in Z3
+Warning--there's a number but no series in de1998data
+Warning--empty journal in roscoe1998theory
 Warning--empty booktitle in Sun2018TowardsFM
-You've used 12 entries,
+You've used 15 entries,
             2785 wiz_defined-function locations,
-            670 strings with 6653 characters,
-and the built_in function-call counts, 6526 in all, are:
-= -- 553
-> -- 151
-< -- 12
-+ -- 63
-- -- 49
-* -- 396
-:= -- 795
-add.period$ -- 19
-call.type$ -- 12
-change.case$ -- 70
+            686 strings with 7001 characters,
+and the built_in function-call counts, 7598 in all, are:
+= -- 628
+> -- 177
+< -- 14
++ -- 75
+- -- 57
+* -- 457
+:= -- 941
+add.period$ -- 21
+call.type$ -- 15
+change.case$ -- 83
 chr.to.int$ -- 0
-cite$ -- 15
-duplicate$ -- 589
-empty$ -- 626
-format.name$ -- 57
-if$ -- 1473
+cite$ -- 20
+duplicate$ -- 695
+empty$ -- 741
+format.name$ -- 66
+if$ -- 1702
 int.to.chr$ -- 0
-int.to.str$ -- 12
-missing$ -- 114
-newline$ -- 41
-num.names$ -- 26
-pop$ -- 214
+int.to.str$ -- 15
+missing$ -- 139
+newline$ -- 50
+num.names$ -- 32
+pop$ -- 262
 preamble$ -- 1
-purify$ -- 45
+purify$ -- 55
 quote$ -- 0
-skip$ -- 215
+skip$ -- 241
 stack$ -- 0
-substring$ -- 398
-swap$ -- 323
-text.length$ -- 12
+substring$ -- 438
+swap$ -- 365
+text.length$ -- 14
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 48
-warning$ -- 3
-while$ -- 56
-width$ -- 14
-write$ -- 124
-(There were 5 warnings)
+type$ -- 56
+warning$ -- 5
+while$ -- 65
+width$ -- 17
+write$ -- 151
+(There were 7 warnings)

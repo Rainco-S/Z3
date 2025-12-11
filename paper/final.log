@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2024.9.25)  11 DEC 2025 15:56
+This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2024.9.25)  11 DEC 2025 22:03
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -272,6 +272,8 @@ File: xetex.def 2022/09/22 v5.0n Graphics/color driver for xetex
 ))
 \Gin@req@height=\dimen181
 \Gin@req@width=\dimen182
+) (/usr/local/texlive/2024/texmf-dist/tex/latex/seqsplit/seqsplit.sty
+Package: seqsplit 2006/08/07 v0.1 Splitting long sequences (DNA, RNA, proteins, etc.) 
 ) (/usr/local/texlive/2024/texmf-dist/tex/latex/pgf/frontendlayer/tikz.sty (/usr/local/texlive/2024/texmf-dist/tex/latex/pgf/basiclayer/pgf.sty (/usr/local/texlive/2024/texmf-dist/tex/latex/pgf/utilities/pgfrcs.sty (/usr/local/texlive/2024/texmf-dist/tex/generic/pgf/utilities/pgfutil-common.tex
 \pgfutil@everybye=\toks33
 \pgfutil@tempdima=\dimen183
@@ -555,79 +557,69 @@ File: l3backend-xetex.def 2024-02-20 L3 backend support: XeTeX
 ) (./final.aux)
 \openout1 = `final.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 17.
-LaTeX Font Info:    Trying to load font information for TS1+cmr on input line 17.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 18.
+LaTeX Font Info:    Trying to load font information for TS1+cmr on input line 18.
  (/usr/local/texlive/2024/texmf-dist/tex/latex/base/ts1cmr.fd
 File: ts1cmr.fd 2023/04/13 v2.5m Standard LaTeX font definitions
 )
-LaTeX Font Info:    ... okay on input line 17.
-LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 30.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 31.
  (/usr/local/texlive/2024/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 30.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 31.
  (/usr/local/texlive/2024/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
 ] [2] [3] [4] [5] [6] [7] [8] [9] [10]
-LaTeX Font Info:    Trying to load font information for OMS+lmr on input line 301.
+LaTeX Font Info:    Trying to load font information for OMS+lmr on input line 302.
  (/usr/local/texlive/2024/texmf-dist/tex/latex/lm/omslmr.fd
 File: omslmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 301.
+LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 302.
  (/usr/local/texlive/2024/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Font shape `OMS/lmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/lmsy/m/n' tried instead on input line 301.
+(Font)              Font shape `OMS/lmsy/m/n' tried instead on input line 302.
  [11] [12]
-Overfull \hbox (6.79648pt too wide) in paragraph at lines 371--371
+Overfull \hbox (6.79648pt too wide) in paragraph at lines 372--372
 \TU/lmr/m/n/10 ample for the implementation of \TU/lmr/m/it/10 flow-through \TU/lmr/m/n/10 is [][]\TU/lmtt/m/n/10 c1.connect('Sync', 'A', 'E')[]\TU/lmr/m/n/10 ,
  []
 
 
-Overfull \hbox (6.28537pt too wide) in paragraph at lines 371--371
+Overfull \hbox (6.28537pt too wide) in paragraph at lines 372--372
 [][]\TU/lmtt/m/n/10 c1.connect('Fifo1', 'E', 'F')[]\TU/lmr/m/n/10 , [][]\TU/lmtt/m/n/10 c1.connect('Fifo1', 'E', 'G') []\TU/lmr/m/n/10 where the
  []
 
-
-Overfull \hbox (45.75648pt too wide) in paragraph at lines 371--371
-\TU/lmr/m/n/10 ously. As for \TU/lmr/m/it/10 Flow-through\TU/lmr/m/n/10 operator, a simple example is [][]\TU/lmtt/m/n/10 c2.connect('Fifo1', 'A', 'D')[]\TU/lmr/m/n/10 ,
- []
-
-
-Overfull \hbox (9.77538pt too wide) in paragraph at lines 371--371
-[][]\TU/lmtt/m/n/10 c2.connect('Sync', 'D', 'B') []\TU/lmr/m/n/10 where the timed data stream flows from nodeAto
- []
-
-[13] (./final.bbl [14] [15] [16]) [17] (./final.aux)
+[13] [14] [15] (./final.bbl [16] [17] [18]) [19] (./final.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-02-20>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 16711 strings out of 474773
- 345434 string characters out of 5757724
+ 16743 strings out of 474773
+ 346180 string characters out of 5757724
  1966839 words of memory out of 5000000
- 38520 multiletter control sequences out of 15000+600000
+ 38548 multiletter control sequences out of 15000+600000
  563686 words of font info for 83 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  84i,34n,93p,1447b,928s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on final.pdf (17 pages).
+Output written on final.pdf (19 pages).

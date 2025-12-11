@@ -14,8 +14,14 @@ Arbab, F.: Reo: A channel-based coordination model for component composition. Ma
 \bibitem{arbab2002coinductive}
 Arbab, F., Rutten, J.J.: A coinductive calculus of component connectors. In: International Workshop on Algebraic Development Techniques. pp. 34--55. Springer (2002)
 
+\bibitem{de1998data}
+De~Roever, W.P., Engelhardt, K.: Data refinement: model-oriented proof methods and their comparison. No.~47, Cambridge University Press (1998)
+
 \bibitem{hoare1997unified}
 Hoare, C.A.R.: Unified theories of programming. In: Mathematical methods in program development, pp. 313--367. Springer (1997)
+
+\bibitem{jones1986systematic}
+Jones, C.B.: Systematic software development using VDM, vol.~66. Prentice Hall International Englewood Cliffs (1986)
 
 \bibitem{Meng12}
 Meng, S.: Connectors as designs: The time dimension. In: Margaria, T., Qiu, Z., Yang, H. (eds.) Sixth International Symposium on Theoretical Aspects of Software Engineering, TASE 2012, 4-6 July 2012, Beijing, China. pp. 201--208. IEEE (2012), \url{http://doi.ieeecomputersociety.org/10.1109/TASE.2012.36}
@@ -28,6 +34,9 @@ de~Moura, L., Bj{\o}rner, N.: Z3: An efficient smt solver. In: Ramakrishnan, C.R
 
 \bibitem{10.1007/978-3-030-31517-7_5}
 Nawaz, M.S., Sun, M.: Using pvs for modeling and verification of probabilistic connectors. In: Hojjat, H., Massink, M. (eds.) Fundamentals of Software Engineering. pp. 61--76. Springer International Publishing, Cham (2019)
+
+\bibitem{roscoe1998theory}
+Roscoe, A.: The theory and practice of concurrency  (1998)
 
 \bibitem{Sun2018TowardsFM}
 Sun, M.: Towards formal modeling and verification of probabilistic connectors in coq xiyue zhang (2018), \url{https://api.semanticscholar.org/CorpusID:85541303}
