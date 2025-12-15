@@ -8,6 +8,7 @@
 \usepackage{seqsplit}
 \usepackage{tikz}
 \usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
 
 \SetKwProg{Let}{let}{be:}{}
 \input{tikz_template}
@@ -474,9 +475,26 @@ Algorithm \ref{alg:refinement} cannot produce any spurious counter examples, i.e
 \texttt{solver.check()}
 \end{algorithm}
 
-\subsection{Implementation}
-We use test cases to validate the correctness of our method, which can be found at \cite{Z3}. Here we choose three representative examples to show how the system works.\par
-There is one thing worth mentioning. In most cases, we intend to check the refinement relation just in terms of the input and output nodes of connectors, i.e., we view the connectors as black boxes. Therefore, when constructing connectors in Z3, we need to ensure the internal nodes obtain different node names so that the algorithm will ignore the distinction inside the connectors. Nevertheless, sometimes we may want to look into the internal behavior of connectors. In this case, we can name the internal nodes the same to observe the refinement relation including the hidden parts.
+\subsection{Implementation details}
+In order to ensure the correctness of the implementation, we need to pay attention to some details when constructing connectors in Z3.
+
+\subsubsection{Black boxes:}
+In most cases, we intend to check the refinement relation just in terms of the input and output nodes of connectors, i.e., we view the connectors as black boxes. Therefore, when constructing connectors in Z3, we need to ensure the internal nodes obtain different node names so that the algorithm will ignore the distinction inside the connectors. Nevertheless, sometimes we may want to look into the internal behavior of connectors. In this case, we can name the internal nodes the same to observe the refinement relation including the hidden parts.
+
+\subsubsection{Automerger:}
+In practical usage, a merger may combine channels of multiple types. To maintain the original functionality of each channel, a user has to add hidden nodes manually to separate the functioning part and the merging part. Fig.\ref{fig:automerger} shows an example of merging a Sync channel and a FIFO1 channel. A hidden node B' should be added after the FIFO1 channel to ensure the data flows out of the FIFO1 channel before being merged.
+
+\begin{figure}[htbp]
+    \input{Figure_automerger}
+    \label{fig:automerger}
+\end{figure}
+
+To address this predicament, we develop an automatic merging algorithm \verb|automerger| that enables users to input the nodes only in their original forms without manually adding hidden nodes. The input includes the basic channels and the nodes to be merged. The algorithm will then search for a merger's participant channels, automatically add a hidden node with a unique name to each one (to satisfy the black box checking), and construct a new Sync channel between the hidden node and the merged node. This algorithm simplifies the process of building complex connectors involving mergers and makies the structure more intuitive and user-friendly, avoiding potential errors from manual node addition.
+
+In addition, we upgrade the merger to a multi-merger that can merge more than two input nodes at the same time. The new merger can rearrange the data flows in a chronological order just like the original merger. The implementation of multi-merger can be found at \cite{Z3}. The \verb|automerger| algorithm works well with the multi-merger.
+
+\subsection{Examples of test cases}
+We use test cases to validate the correctness of our method, which can be found at \cite{Z3}. Here we choose three representative examples to show how the system works.
 
 \begin{example} % 1. Basic test case
     Fig.\ref{fig:c1} contains four similar connectors, the purpose of which is to output the data flow simultaneously from two sink nodes with a delay. Graph \verb|b|, \verb|c|, and \verb|d| all complete the task perfectly by using a \textit{SyncDrain} channel to synchronize the two flows or just making the delay happens in the same \textit{FIFO1} channel. However, graph \verb|a| fails to achieve the goal since the node B and C are not constrained to be simultanuous. Hence, \verb|b|, \verb|c|, and \verb|d| are equivlent with each other, and are all refinements of \verb|a|.\par
