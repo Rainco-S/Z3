@@ -352,7 +352,7 @@ As shown previously, modeling and reasoning of Reo connectors in UTP allows us t
 \label{sec:z3chan}
 We first need to implement the construction of connectors and also define the refinement checking function in a way that fits Z3. Typically, connector construction starts with the formal definition of channels and composition operators, which will be used hereafter to build and assess more complex models. Such a framework must be carefully developed so that the further model assessment can be simplified as much as possible.\par
 Coinciding with the definition of channels in UTP, we dealt with both time and data relation constraints in the basic definition in Z3. A table with correspondence between basic definitions in UTP and Z3 can be found at \cite{Z3}.\par
-An auxiliary functionConjunctionis used to take the conjunction of every constraint in the constraint lists param-eterized by constraints. For example, the specific behavior constraints for Syncchannel are classified into two types: data constraints and time constraints. The definition of Syncprovides the behavior pattern it needs to follow: each item in timed data streams of output specified as “node[1]” is equivalent to the timed data items of input specified as “node[0]”, which are exactly data and time constraints. As they are both requirements that we need to satisfy no matter data or time is related, each constraint in the list will all be combined finally.\par
+An auxiliary function \verb|Conjunction| is used to take the conjunction of every constraint in the constraint lists param-eterized by constraints. For example, the specific behavior constraints for \textit{Sync} channel are classified into two types: data constraints and time constraints. The definition of \textit{Sync} provides the behavior pattern it needs to follow: each item in timed data streams of output specified as \verb|node[1]| is equivalent to the timed data items of input specified as \verb|node[0]|, which are exactly data and time constraints. As they are both requirements that we need to satisfy no matter data or time is related, each constraint in the list will all be combined finally.\par
 Since we have already defined the behavior constraints for channels with UTP, now we take the \textit{Sync} channel as an example to show the code of defining them in Z3.
 \begin{verbatim}
 def Sync(nodes, bound)
@@ -363,13 +363,13 @@ def Sync(nodes, bound)
         constraints += [nodes[0]['time'][i]==nodes[1]['time'][i]]
     return Conjunction(constraints)
 \end{verbatim}
-\textit{SyncDrain} channel is defined in a similar way. On the basis of the behavior of SyncDrainchannel, only time related constraints are needed, i.e., equivalence of corresponding items in two time streams of the two inputs.\par
+\textit{SyncDrain} channel is defined in a similar way. On the basis of the behavior of \textit{SyncDrain} channel, only time related constraints are needed, i.e., equivalence of corresponding items in two time streams of the two inputs.\par
 The remaining basic channels are omitted here. For the construction of probabilistic channels, we adopted a method that involves generating a random number between 0 and 1 and comparing it with the corresponding probability. Specifically, for the \textit{CptSync} channel, given the probability $p$ of data corruption, we generate a random float number $q$. If $q$ is less than $p$, the data is judged as corrupted; otherwise, the data is successfully transmitted.
 % 这里你补充一些你在Z3里定义timer channels时的特殊之处或者一些basic里面体现不出来的部分。
 
 \subsection{Composing operators}
 While the basic channels are already well defined as the basis of the whole construction framework, the composition operators also need to be specified for large-scale connectors' construction just like cement for bricks. There are three kinds of composition operators: \textit{replicate}, \textit{flow-through}, and \textit{merge}.\par
-Both \textit{replicate} and \textit{flow-through} perators can be implicitly achieved when we compose channels to construct connec-tors using same node names. A simple example for the implementation of \textit{flow-through} is \verb|c1.connect('Sync', 'A', 'E')|, \verb|c1.connect('Fifo1', 'E', 'F')|, \verb|c1.connect('Fifo1', 'E', 'G')| where the message that node $E$ receives from $A$ is duplicated and sent to $F$ and $G$ simultaneously. As for \textit{Flow-through} operator, a simple example is \texttt{\seqsplit{c2.connect('Fifo1', 'A', 'D')}}, \verb|c2.connect('Sync', 'D', 'B')| where the timed data stream flows from node $A$ to node $B$ through the mixed node $D$. In these two examples, \verb|c1| and \verb|c2| both belong to the \verb|Connector| class which will be elaborated in detail later.\par
+Both \textit{replicate} and \textit{flow-through} perators can be implicitly achieved when we compose channels to construct connectors using same node names. A simple example for the implementation of \textit{flow-through} is \verb|c1.connect('Sync', 'A', 'E')|, \verb|c1.connect('Fifo1', 'E', 'F')|, \verb|c1.connect('Fifo1', 'E', 'G')| where the message that node $E$ receives from $A$ is duplicated and sent to $F$ and $G$ simultaneously. As for \textit{Flow-through} operator, a simple example is \texttt{\seqsplit{c2.connect('Fifo1', 'A', 'D')}}, \verb|c2.connect('Sync', 'D', 'B')| where the timed data stream flows from node $A$ to node $B$ through the mixed node $D$. In these two examples, \verb|c1| and \verb|c2| both belong to the \verb|Connector| class which will be elaborated in detail later.\par
 Among the three types of composition operators, the most difficult one is \textit{Merge}, which is specially dealt with as a channel \textit{Merger} in our model. Together with the other two kinds of composition operators: \textit{replicate} and \textit{flow-through}, they provide a complete basis for the construction of any connector, coinciding with the original set of composition operations \cite{Reo}, \cite{MENG2012799}. For each item in the output stream of the \textit{Merger} channel, there is a non-deterministic choice between the two input nodes. Hence, the \textit{Merger} channel also needs to be defined in a recursive way like the \textit{LossySync} channel. Note that the constraints also conform well to the original semantics of the \textit{merge} operator. Derived from the two recursive definitions, an additional advantage of defining \textit{LossySync} and \textit{Merger} channel in this way is that it can preserve the behavioral pattern to a great extent without any assumption such as priorities of reading or taking data from the two input streams.
 % 好像地方不够了，暂且先放着吧
 % \begin{verbatim}
@@ -400,9 +400,9 @@ Connector $Q$ is a refinement of another connector $P$ if the behavior property 
     For two connectors \textbf{R}$_1$ and \textbf{R}$_2$
     \[
     \begin{split}
-        \textbf{con}&:\textbf{R}_i(in:in_{\textbf{R}_i};out:out_{\textbf{R}_i})\\
-        \textbf{pre}&:P_i(in_{\textbf{R}_i})\\
-        \textbf{post}&:Q_i(in_{\textbf{R}_i},out_{\textbf{R}_i})
+        \textup{\textbf{con}}&:\textbf{R}_i(in:in_{\textbf{R}_i};out:out_{\textbf{R}_i})\\
+        \textup{\textbf{pre}}&:P_i(in_{\textbf{R}_i})\\
+        \textup{\textbf{post}}&:Q_i(in_{\textbf{R}_i},out_{\textbf{R}_i})
     \end{split}
     \]
     where $i=1,2$, then$$\textbf{R}_1\sqsubseteq\textbf{R}_2=_{df}(P_1\Rightarrow P_2)\land(P_1\land Q_2\Rightarrow Q_1)$$
@@ -421,6 +421,7 @@ follows:
     For a connector \textbf{R}$(in:in_{\textbf{R}};out:out_{\textbf{R}})$, let $i$ be the input and $O$ be a possibly infinite set containing the expected output(s). Both $i$ and any $o\in O$ are mapping from set of node names to timed data sequences with the same domains as $in_{\textbf{R}}$ and $out_{\textbf{R}}$ respectively. A deterministic test case for \textbf{R} is defined as
     $$t_d(in_{\textbf{R}},out_{\textbf{R}})=(in_{\textbf{R}}=i)\vdash out_{\textbf{R}}\in O$$
 \end{definition}
+
 From the previous discussion, we know that test cases, as well as connector specifications and implementations, can be specified by designs. Taking specifications into consideration, test cases should be abstractions of a specification if they are properly derived from the specification. It is obvious that an implementation that is correct with respect to its specification should refine its specification. Therefore, an implementation is a refinement of test cases if and only if the implementation is correct, then it should pass the test cases.\par
 Finding a test case t that detects a given fault is the central strategy in fault-based testing. For a connector, a fault-based
 test case is defined as follows:
@@ -432,7 +433,7 @@ A fault-adequate test case detects a fault in \textbf{R}'. Alternatively, we can
 
 \subsection{Refinement checking}
 With the above basic channels and composition operators, the next step is to construct Reo connectors in this framework. In our model, \verb|Connector| is defined as a class, which provides a method for constructing complex connectors out of the basic channels and composition operators. The statements inside the class definition are function definitions.\par
-The \verb|isRefinementOf| function is used to express refinement checking. The result type of the function of Boolean, which shows whether or not a connector is a refinement of another. According to the definition of refinement relation in Section \ref{sec:Refinement}, we have a formula that represents it properly: $P\sqsubseteq Q$ if and only if the behavior property of connector $P$ can be derived from the property of connector $Q$, i.e., $Q\to P$. If $Q$ is indeed a refinement of $P$, it can be rephrased as $\lnot Q\lor P$. If Z3 solver presents a model satisfying the negation of this formula, then the refinement relation is falsified by a counter example. On the contrary, if there doesn't exist a counter example within a given bound, we say that the refinement relation, $P\sqsubseteq Q$, holds within the bound. The formal definition of \verb|isRefinementOf| is given in Algorithm \ref{alg:refinement}. The complete definition of the function can be found at \cite{Z3}.\par
+The function \verb|isRefinementOf| is used to express refinement checking. The result type of the function of Boolean, which shows whether or not a connector is a refinement of another. According to the definition of refinement relation in Section \ref{sec:Refinement}, we have a formula that represents it properly: $P\sqsubseteq Q$ if and only if the behavior property of connector $P$ can be derived from the property of connector $Q$, i.e., $Q\to P$. If $Q$ is indeed a refinement of $P$, it can be rephrased as $\lnot Q\lor P$. If Z3 solver presents a model satisfying the negation of this formula, then the refinement relation is falsified by a counter example. On the contrary, if there doesn't exist a counter example within a given bound, we say that the refinement relation, $P\sqsubseteq Q$, holds within the bound. The formal definition of \verb|isRefinementOf| is given in Algorithm \ref{alg:refinement}. The complete definition of the function can be found at \cite{Z3}.\par
 Algorithm \ref{alg:refinement} cannot produce any spurious counter examples, i.e. all the counter examples of the bounded model located by the algorithm are also correct counter examples of the original model. To illustrate this conclusion, first we assume the bound we set is $b$, for any channel, the constraints added to Z3 solver are bounded, i.e., only constraints on the prefixes of timed data streams are fed to Z3. Let $\Sigma$ be the set of all constraints of connectors and $\sigma$ be the set of bounded ones. If there exists a counter example $\pi$ ($\pi$ is a set of timed data streams' prefixed corresponding to the nodes) that fails to satisfy the weaker constraints: $\pi\not\models\sigma$, then we can deduce that $\pi\not\models\Sigma$. Let $\pi$ be a prefix of the full timed data stream $\Pi$ and $\Pi\setminus\pi$ satisfies all the left constraints $\Sigma\setminus\sigma$. A valid prefix leads to a valid timed data stream, hence we have $\Pi\not\models\Sigma$. Thus, the counter examples generated by Algorithm \ref{alg:refinement} are always sound and genuine.
 \begin{algorithm}
 \caption{Q.isRefinementOf(P, bound).}
@@ -473,183 +474,39 @@ Algorithm \ref{alg:refinement} cannot produce any spurious counter examples, i.e
 \texttt{solver.check()}
 \end{algorithm}
 
-\begin{example}
-    1
+\subsection{Implementation}
+We use test cases to validate the correctness of our method, which can be found at \cite{Z3}. Here we choose three representative examples to show how the system works.\par
+There is one thing worth mentioning. In most cases, we intend to check the refinement relation just in terms of the input and output nodes of connectors, i.e., we view the connectors as black boxes. Therefore, when constructing connectors in Z3, we need to ensure the internal nodes obtain different node names so that the algorithm will ignore the distinction inside the connectors. Nevertheless, sometimes we may want to look into the internal behavior of connectors. In this case, we can name the internal nodes the same to observe the refinement relation including the hidden parts.
+
+\begin{example} % 1. Basic test case
+    Fig.\ref{fig:c1} contains four similar connectors, the purpose of which is to output the data flow simultaneously from two sink nodes with a delay. Graph \verb|b|, \verb|c|, and \verb|d| all complete the task perfectly by using a \textit{SyncDrain} channel to synchronize the two flows or just making the delay happens in the same \textit{FIFO1} channel. However, graph \verb|a| fails to achieve the goal since the node B and C are not constrained to be simultanuous. Hence, \verb|b|, \verb|c|, and \verb|d| are equivlent with each other, and are all refinements of \verb|a|.\par
+    In our Z3 implementation, we can easily construct these four connectors and check their refinement relations. Graph \verb|a| and \verb|b| can be formalized into
+    \begin{verbatim}
+c1 = ['Sync A D', 'Sync D E', 'Sync D F', 'Fifo1 E B', 'Fifo1 F C']
+c2 = ['Sync A D', 'Sync D E', 'Sync D F', 'Fifo1 E G', 'Fifo1 F H',
+      'SyncDrain G H','Sync G B', 'Sync H C']
+    \end{verbatim}
+    After constructing them into the \verb|Connector| class by the function \verb|automerger|, the result aligns with what we expect: \verb|c1.isRefinementOf(c2, bound)| returns \verb|False| with a counter example, while \verb|c2.isRefinementOf(c1, bound)| returns \verb|True|. The equivalence between \verb|c2|, \verb|c3|, and \verb|c4| can also be verified in the same way.
 \end{example}
-\begin{figure}[htbp] % Basic test case
-  \centering
-    \begin{tikzpicture}[x=2cm, y=1cm]
-    \tikzstyle{node0}=[circle, draw, fill=white, inner sep=0pt, minimum size=1.5mm]
-    \tikzstyle{node1}=[circle, draw, fill=black, inner sep=0pt, minimum size=1.5mm]
-
-    % connector 1
-    \node[node0, label=above:A] (A1) at (0, -0.5) {};
-    \node[node0, label=above:B] (B1) at (1.8, 0) {};
-    \node[node0, label=below:C] (C1) at (1.8, -1) {};
-    \node[node1, label=above:D] (D1) at (0.5, -0.5) {};
-    \node[node1, label=above:E] (E1) at (1, 0) {};
-    \node[node1, label=below:F] (F1) at (1, -1) {};
-
-    \chanSync{A1}{D1}
-    \chanSync{D1}{E1}
-    \chanSync{D1}{F1}
-    \chanFifoOne{E1}{B1}
-    \chanFifoOne{F1}{C1}
-
-    \node at (0, 0.5) {a};
-
-    \node at (2.2, -0.5) {$\sqsubseteq$};
-
-    % connector 2
-    \coordinate (off2) at (2.6, 0);
-    \node[node0, label=above:A] (A2) at ($(off2) + (0, -0.5)$) {};
-    \node[node0, label=above:B] (B2) at ($(off2) + (2.3, 0)$) {};
-    \node[node0, label=below:C] (C2) at ($(off2) + (2.3, -1)$) {};
-    \node[node1, label=above:D] (D2) at ($(off2) + (0.5, -0.5)$) {};
-    \node[node1, label=above:E] (E2) at ($(off2) + (1, 0)$) {};
-    \node[node1, label=below:F] (F2) at ($(off2) + (1, -1)$) {};
-    \node[node1, label=above:G] (G2) at ($(off2) + (1.8, 0)$) {};
-    \node[node1, label=below:H] (H2) at ($(off2) + (1.8, -1)$) {};
-
-    \chanSync{A2}{D2}
-    \chanSync{D2}{E2}
-    \chanSync{D2}{F2}
-    \chanFifoOne{E2}{G2}
-    \chanFifoOne{F2}{H2}
-    \chanSyncDrain{G2}{H2}
-    \chanSync{G2}{B2}
-    \chanSync{H2}{C2}
-
-    \node at ($(off2)+(0, 0.5)$) {b};
-
-    \node[rotate=90] at (3.9, -2) {$\equiv$};
-
-    % connector 3
-    \coordinate (off3) at (0, -3);
-    \node[node0, label=above:A] (A1) at ($(off3) + (0, -0.5)$) {};
-    \node[node0, label=above:B] (B1) at ($(off3) + (1.8, 0)$) {};
-    \node[node0, label=below:C] (C1) at ($(off3) + (1.8, -1)$) {};
-    \node[node1, label=above:D] (D1) at ($(off3) + (0.5, -0.5)$) {};
-    \node[node1, label=above:E] (E1) at ($(off3) + (1.3, 0)$) {};
-    \node[node1, label=below:F] (F1) at ($(off3) + (1.3, -1)$) {};
-
-    \chanSync{A1}{D1}
-    \chanFifoOne{D1}{E1}
-    \chanFifoOne{D1}{F1}
-    \chanSyncDrain{E1}{F1}
-    \chanSync{E1}{B1}
-    \chanSync{F1}{C1}
-
-    \node at ($(off3)+(0, 0.5)$) {c};
-
-    \node at (2.2, -3.5) {$\equiv$};
-
-    % connector 4
-    \coordinate (off4) at (3.1, -3);
-    \node[node0, label=above:A] (A1) at ($(off4) + (0, -0.5)$) {};
-    \node[node0, label=above:B] (B1) at ($(off4) + (1.3, 0)$) {};
-    \node[node0, label=below:C] (C1) at ($(off4) + (1.3, -1)$) {};
-    \node[node1, label=above:D] (D1) at ($(off4) + (0.8, -0.5)$) {};
-
-    \chanFifoOne{A1}{D1}
-    \chanSync{D1}{B1}
-    \chanSync{D1}{C1}
-
-    \node at ($(off4)+(0, 0.5)$) {d};
-
-    \end{tikzpicture}
-  \caption{Basic test case}
-  \label{fig:c1}
+\begin{figure}[htbp]
+    \input{Figure1}
+    \label{fig:c1}
 \end{figure}
 
-\begin{example}
-    2
+\begin{example} % 2. Time-based test case
+    The left graph in Fig.\ref{fig:c2} is called Lower Bounded FIFO1, which aims to output the data flow with a delay of at least $t$ time units. The right graph is a mutated connector of the former one, since it requires the output time to be exactly $t$ time units later than the input time. Hence in Z3 implementation, the result of \verb|isRefinementOf| between the two connectors would be both \verb|False| with counter examples.
 \end{example}
- % Time-based test case
 \begin{figure}[htbp]
-  \centering
-    \begin{tikzpicture}[x=2cm, y=1cm]
-    \tikzstyle{node0}=[circle, draw, fill=white, inner sep=0pt, minimum size=1.5mm]
-    \tikzstyle{node1}=[circle, draw, fill=black, inner sep=0pt, minimum size=1.5mm]
-
-    % connector 1
-    \node[node0, label=above left:A] (A1) at (0, 0) {};
-    \node[node0, label=above right:B] (B1) at (1.5, 0) {};
-    \node[node1, label=above:C] (C1) at (1, 0) {};
-    \node[node1, label=below left:D] (D1) at (0, -1) {};
-    \node[node1, label=below right:E] (E1) at (1, -1) {};
-
-    \chanFifoOne{A1}{C1}
-    \chanTimert{A1}{D1}{1s}
-    \chanFifoOne{D1}{E1}
-    \chanSyncDrain{C1}{E1}
-    \chanSync{C1}{B1}
-
-    \node at (0.75, -2) {Lower Bounded FIFO1};
-
-    % connector 2
-    \coordinate (off) at (2.5, 0);
-    \node[node0, label=above left:A] (A2) at ($(off) + (0, 0)$) {};
-    \node[node0, label=above right:B] (B2) at ($(off) + (1.5, 0)$) {};
-    \node[node1, label=above:C] (C2) at ($(off) + (1, 0)$) {};
-    \node[node1, label=below left:D] (D2) at ($(off) + (0, -1)$) {};
-
-    \chanFifoOne{A2}{C2}
-    \chanTimert{A2}{D2}{1s}
-    \chanSyncDrain{C2}{D2}
-    \chanSync{C2}{B2}
-
-    \node at ($(off)+(0.75, -2)$) {Mutated Lower Bounded FIFO1};
-
-    \end{tikzpicture}
-  \caption{Time-based test case}
-  \label{fig:c2}
+    \input{Figure2}
+    \label{fig:c2}
 \end{figure}
 
-\begin{example}
-    3
+\begin{example} % 3. Probability-based test case
+    In the third example, we combine a timer channel and a probabilistic channel to form a complex connector and its mutation as shown in Fig.\ref{fig:c3}. The two connectors are supposed to output a random signal between 0 and 1 after a delay of $t$ time units. The two connectors only differ where the random signal is generated: before or after the delay. Therefore, they are equivalent, i.e., a refinement of each other. In Z3 implementation, we can verify this quivalence by verifying the \verb|True| output of the \verb|isRefinementOf| function in both directions.
 \end{example}
- % Probability-based test case
 \begin{figure}[htbp]
-  \centering
-    \begin{tikzpicture}[x=2cm, y=1cm]
-    \tikzstyle{node0}=[circle, draw, fill=white, inner sep=0pt, minimum size=1.5mm]
-    \tikzstyle{node1}=[circle, draw, fill=black, inner sep=0pt, minimum size=1.5mm]
-
-    % connector 1
-    \node[node0, label=above left:A] (A1) at (0, 0) {};
-    \node[node0, label=above right:B] (B1) at (2, 0) {};
-    \node[node1, label=below:C] (C1) at (1.6, -1) {};
-    \node[node1, label=above:D] (D1) at (1.6, 0) {};
-    \node[node1, label=above:E] (E1) at (0.8, 0) {};
-
-    \chanRdmSync{A1}{E1}{$rand(0, 1)$}
-    \chanFifoOne{E1}{D1}
-    \chanTimert{E1}{C1}{1s}
-    \chanSyncDrain{C1}{D1}
-    \chanSync{D1}{B1}
-
-    \node at (1, -2) {Random tFIFO1};
-
-    % connector 2
-    \coordinate (off) at (3, 0);
-    \node[node0, label=above left:A] (A1) at ($(off) + (0, 0)$) {};
-    \node[node0, label=above right:B] (B1) at ($(off) + (2, 0)$) {};
-    \node[node1, label=below:C] (C1) at ($(off) + (0.8, -1)$) {};
-    \node[node1, label=above:D] (D1) at ($(off) + (0.8, 0)$) {};
-    \node[node1, label=above:E] (E1) at ($(off) + (1.2, 0)$) {};
-
-    \chanSync{D1}{E1}
-    \chanFifoOne{A1}{D1}
-    \chanTimert{A1}{C1}{1s}
-    \chanSyncDrain{C1}{D1}
-    \chanRdmSync{E1}{B1}{$rand(0, 1)$}
-
-    \node at ($(off)+(1, -2)$) {Mutated Random tFIFO1};
-
-    \end{tikzpicture}
-  \caption{Probability-based test case}
-  \label{fig:c3}
+    \input{Figure3}
+    \label{fig:c3}
 \end{figure}
 
 

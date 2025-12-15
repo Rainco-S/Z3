@@ -1,0 +1,34 @@
+\centering
+\begin{tikzpicture}[x=2cm, y=1cm]
+
+    % connector 1
+    \node[node0, label=above left:A] (A1) at (0, 0) {};
+    \node[node0, label=above right:B] (B1) at (1.5, 0) {};
+    \node[node1, label=above:C] (C1) at (1, 0) {};
+    \node[node1, label=below left:D] (D1) at (0, -1) {};
+    \node[node1, label=below right:E] (E1) at (1, -1) {};
+
+    \chanFifoOne{A1}{C1}
+    \chanTimert{A1}{D1}{t}
+    \chanFifoOne{D1}{E1}
+    \chanSyncDrain{C1}{E1}
+    \chanSync{C1}{B1}
+
+    \node at (0.75, -2) {Lower Bounded FIFO1};
+
+    % connector 2
+    \coordinate (off) at (2.5, 0);
+    \node[node0, label=above left:A] (A2) at ($(off) + (0, 0)$) {};
+    \node[node0, label=above right:B] (B2) at ($(off) + (1.5, 0)$) {};
+    \node[node1, label=above:C] (C2) at ($(off) + (1, 0)$) {};
+    \node[node1, label=below left:D] (D2) at ($(off) + (0, -1)$) {};
+
+    \chanFifoOne{A2}{C2}
+    \chanTimert{A2}{D2}{t}
+    \chanSyncDrain{C2}{D2}
+    \chanSync{C2}{B2}
+
+    \node at ($(off)+(0.75, -2)$) {Mutated Lower Bounded FIFO1};
+
+\end{tikzpicture}
+\caption{Time-based test case}
