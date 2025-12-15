@@ -1,5 +1,4 @@
 from reo import *
-from automerger import define_connector
 
 # Basic cases
 test_basic_01 = (
