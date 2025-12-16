@@ -1,4 +1,4 @@
-# Z3
+# Test Case Generation using Z3
 This repository provides connectors modeling in Z3 and refinement checking scripts, as well as some examples. Additionally, we finished visualizing the connectors in LaTeX using TikZ.
 ## Dependencies
 - python
