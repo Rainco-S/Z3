@@ -37,5 +37,5 @@ Terminal will return dictionary(s) as the result in the form of
 ```
 ## Visualizing Connectors in LaTeX
 We finished visualizing the connectors in LaTeX using TikZ. The corresponding scripts are in folder `\Visualization`.\
-`tikz_template.tex`: we provide a template file for all the connectors defined in `channel.py` in this LaTeX file.
-We provide three examples, which are used in the paper, in the folder.
+`tikz_template.tex`: we provide a template for all the connectors defined in `channel.py` in this LaTeX file.
+There are also three examples in this folder, which are showed in the paper.
