@@ -1,6 +1,6 @@
 from reo import *
 
-def define_connector(connector_name, input_connectors):
+def define_connector(input_connectors):
     conn = Connector()
     merger_count = 0
 
@@ -33,4 +33,4 @@ def define_connector(connector_name, input_connectors):
     for con in mergers:
         conn.connect('Merger', *con[1])
 
-    return conn
+    return conn, basic_channels, mergers

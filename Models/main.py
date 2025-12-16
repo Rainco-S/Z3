@@ -43,11 +43,11 @@ def run_experiment(case_name, case_data):
     print(f"{'='*60}")
 
     # Model Connectors
-    res_spec = define_connector("Spec", spec_list)
-    spec_conn = res_spec[0] if isinstance(res_spec, tuple) else res_spec
+    res_spec, _, _ = define_connector(spec_list)
+    spec_conn = res_spec
     
-    res_impl = define_connector("Impl", impl_list)
-    impl_conn = res_impl[0] if isinstance(res_impl, tuple) else res_impl
+    res_impl, _, _ = define_connector(impl_list)
+    impl_conn = res_impl
 
     # Impl <= Spec
     run_single_check(impl_conn, spec_conn, "Impl", "Spec")
