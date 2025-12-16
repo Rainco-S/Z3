@@ -27,7 +27,7 @@ def Disjunction(constraints):
 
 class Channel:
     # Special data
-    CORRUPTED = 10
+    CORRUPTED = 10 # for CptSync
     TIMEOUT = 11
     OFF = 12
     RESET = 13
@@ -90,7 +90,7 @@ class Channel:
         return Fifo1eInstance
     
     @staticmethod
-    def Fifone(n, e): # DIY, e is a list of length <= n
+    def Fifone(n, e):
         def FifoneInstance(nodes, bound):
             assert len(nodes) == 2
             assert len(e) <= n
@@ -141,7 +141,6 @@ class Channel:
         # Disjunction of two cases (logical OR): either data loss or successful transmission.
         return Or(And(Conjunction(constraints_0), Channel.LossySync(nodes, bound, idx + 1, num)),
                   And(Conjunction(constraints_1), Channel.LossySync(nodes, bound, idx + 1, num + 1)))
-
 
     # additional channels in [10]
     @staticmethod
@@ -220,7 +219,7 @@ class Channel:
 
     # Probabilistic
     @staticmethod
-    def dang(p):
+    def CptSync(p):
         def CptSyncInstance(nodes, bound):
             assert len(nodes) == 2
             assert 0 <= p <= 1

@@ -1,8 +1,5 @@
 from reo import *
 
-# input connectors' format:
-# test5_1 = ['LossySync A B', 'LossySync A D', 'SyncDrain A C', 'Sync B C', 'Sync D C', 'Merger B D C', 'Sync B E', 'Sync D F']
-
 def define_connector(connector_name, input_connectors):
     conn = Connector()
     merger_count = 0
