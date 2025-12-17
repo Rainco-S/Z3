@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2024.9.25)  16 DEC 2025 15:13
+This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2024.9.25)  17 DEC 2025 17:01
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -697,24 +697,29 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 33.
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
-] [2] [3] [4] [5] [6] [7] [8] [9]
-LaTeX Font Info:    Trying to load font information for OMS+lmr on input line 285.
+] [2] [3] [4] [5] [6]
+Overfull \hbox (3.96379pt too wide) in paragraph at lines 191--199
+ []\TU/lmr/bx/n/10 SyncDrain:[] \TU/lmr/m/n/10 An exotic channel in Reo is the synchronous drain channel $\OML/cmm/m/it/10 A [] B \OT1/cmr/m/n/10 :$
+ []
+
+[7] [8] [9]
+LaTeX Font Info:    Trying to load font information for OMS+lmr on input line 308.
  (/usr/local/texlive/2024/texmf-dist/tex/latex/lm/omslmr.fd
 File: omslmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 285.
+LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 308.
  (/usr/local/texlive/2024/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Font shape `OMS/lmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/lmsy/m/n' tried instead on input line 285.
+(Font)              Font shape `OMS/lmsy/m/n' tried instead on input line 308.
  [10] [11] [12] [13] [14] (./Figure_automerger.tex) [15] [16]
-Overfull \hbox (4.62646pt too wide) in paragraph at lines 467--467
+Overfull \hbox (4.62646pt too wide) in paragraph at lines 490--490
 []\TU/lmtt/m/n/10 c1 = ['Sync A D', 'Sync D E', 'Sync D F', 'Fifo1 E B', 'Fifo1 F C'][] 
  []
 
 
-Overfull \hbox (4.62646pt too wide) in paragraph at lines 467--467
+Overfull \hbox (4.62646pt too wide) in paragraph at lines 490--490
 []\TU/lmtt/m/n/10 c2 = ['Sync A D', 'Sync D E', 'Sync D F', 'Fifo1 E G', 'Fifo1 F H',[] 
  []
 
@@ -727,10 +732,10 @@ Package rerunfilecheck Info: File `final.out' has not changed.
 (rerunfilecheck)             Checksum: CC53B68600796698358DC1537681206E;405.
  ) 
 Here is how much of TeX's memory you used:
- 23709 strings out of 474773
- 454069 string characters out of 5757724
+ 23719 strings out of 474773
+ 454238 string characters out of 5757724
  1961839 words of memory out of 5000000
- 45406 multiletter control sequences out of 15000+600000
+ 45416 multiletter control sequences out of 15000+600000
  564046 words of font info for 84 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  84i,34n,93p,1173b,926s stack positions out of 10000i,1000n,20000p,200000b,200000s

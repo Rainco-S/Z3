@@ -43,8 +43,8 @@ Unifying Theories of Programming (UTP) offers a uniform relational framework for
 SMT solvers, such as Z3, have shown strong capabilities in automated constraint solving and bounded verification. While recent work has applied Z3 to refinement checking of Reo connectors, support for fault-based test case generation and scalable construction of complex connectors remains limited.\par
 To overcome these limitations, this paper presents a unified UTP- and Z3-based framework for the formal modeling, refinement verification, and fault-based test case generation of Reo connectors. Our main contributions are:
 \begin{itemize}
-    \item modeling basic, timed, and probabilistic Reo connectors in Z3, and automated refinement/equivalence checking using Z3, including counterexample generation;
-    \item a fault-based test case generation approach for detecting common connector design errors;
+    \item modeling basic, timed, and probabilistic Reo connectors in Z3;
+    \item automated refinement/equivalence checking using Z3, including fault-based test case generation approach for detecting common connector design errors;
     \item automated support for connector construction via an automerger algorithm and a multi-merger extension.
 \end{itemize}
 The remainder of the paper is organized as follows. Section \ref{sec:preliminaries} introduces Reo, UTP designs, and Z3. Section \ref{sec:utp-modeling} presents the UTP-based modeling of connectors. Section \ref{sec:z3-refinement} describes Z3-based refinement checking, test case generation, and implementation details. Section \ref{sec:conclusion} concludes the paper and outlines future work.
@@ -79,7 +79,7 @@ Finally, iteration is expressed by means of recursive definitions. A recursively
 The theory of designs can be taken as a tool for representing specifications, programs, and, as in the following sections, connectors.
 
 \subsubsection{Observational model for connectors}
-Connectors describe the coordination among components/services. We use $in_R$ and $out_R$ to denote what happens on the source nodes and the sink nodes of a connector \textbf{R}, respectively, instead of using unprimed variables for initial observations (inputs) and primed variables for subsequent ones (outputs) as in \cite{hoare1997unified}.\par
+Connectors describe the coordination among components/services. We use $in_\textbf{R}$ and $out_\textbf{R}$ to denote what happens on the source nodes and the sink nodes of a connector \textbf{R}, respectively, instead of using unprimed variables for initial observations (inputs) and primed variables for subsequent ones (outputs) as in \cite{hoare1997unified}.\par
 For an arbitrary connector \textbf{R}, the relevant observations come in pairs, with one observation on the source nodes of \textbf{R}, and one observation on the sink nodes of \textbf{R}. For every node $N$, the corresponding observation on $N$ is given by a (finite or infinite) timed data sequence, which is defined as follows:\par
 Let $D$ be an arbitrary set, the elements of which are called data elements. The set $DS$ of data sequences is defined as$$DS=D^*$$
 i.e., the set of all sequences $\alpha=(\alpha(0),\alpha(1),\alpha(2),\ldots)$ over $D$. Let $\mathbb{R}^*_+$ be the set of non-negative real numbers, which in the present context can be used to represent time moments.\footnote{Here we use the continuous time model for connectors since it is expressive and closer to the nature of time in the real world.} For a sequence $s$, we use $|s|$ to denote the length of $s$, and if $s$ is an infinite sequence, then $|s|=\infty$. Let $\mathbb{R}^*_+$ be the set of sequences $a=(a(0),a(1),a(2),\ldots)$ over $\mathbb{R}_+$, and for all $a=(a(0),a(1),a(2),\ldots)$ and $b=(b(0),b(1),b(2),\ldots)$ in $\mathbb{R}^*_+$, if $|a|=|b|$, then
@@ -154,7 +154,13 @@ The synchronous channel $A\longrightarrow B$ transfers the data without delay in
 \]
 
 \subsubsection{FIFO1:}
-The simplest form of an asynchronous channel is a FIFO channel with one buffer cell, which is denoted as FIFO1. The FIFO1 channel whose buffer is not full accepts input without immediately outputting it. The accepted data item is kept in the internal FIFO buffer of the channel. The next input can happen only after an output occurs. Note that here we use $(\overrightarrow{b^R})^R<\overrightarrow{a}$ to represent the relationship between the time moments for outputs and their corresponding next inputs.
+The simplest form of an asynchronous channel is a FIFO channel with one buffer cell, which is denoted as FIFO1. The FIFO1 channel $A\,
+\tikz[baseline=-0.5ex]{
+  \draw (0,0) -- (0.4,0);
+  \draw (0.4,-0.15) rectangle (1,0.15);
+  \draw[->] (1,0) -- (1.4,0);
+}\,
+B:$ whose buffer is not full accepts input without immediately outputting it. The accepted data item is kept in the internal FIFO buffer of the channel. The next input can happen only after an output occurs. Note that here we use $(\overrightarrow{b^R})^R<\overrightarrow{a}$ to represent the relationship between the time moments for outputs and their corresponding next inputs.
 This notation can be simplicified to $b<\overrightarrow{a}$ if we consider infinite sequences of inputs and outputs.\footnote{Note that $(\overrightarrow{b^R})^R<\overrightarrow{a}$ denotes the sequence obtained by removing the $n$-th element from $a$ sequence $b$ with length $n$. For infinite sequences, we have $(\overrightarrow{b^R})^R=b$.}
 \[
 \begin{split}
@@ -165,7 +171,14 @@ This notation can be simplicified to $b<\overrightarrow{a}$ if we consider infin
 \]
 
 \subsubsection{FIFO1e:}
-On the other hand, for the FIFO1 channel $A-\fbox{\parbox[c][0.2em][c]{1.2em}{\centering e}}\to B$ where the buffer contains the data element e, the communication can be initiated only if the data element e can be taken via the sink end. In this case, we have
+On the other hand, for the FIFO1 channel $A\,
+\tikz[baseline=-0.5ex]{
+  \draw (0,0) -- (0.4,0);
+  \draw (0.4,-0.15) rectangle (1,0.15);
+  \node at (0.7,0) {$e$};
+  \draw[->] (1,0) -- (1.4,0);
+}\,
+B:$ where the buffer contains the data element e, the communication can be initiated only if the data element e can be taken via the sink end. In this case, we have
 \[
 \begin{split}
     \textbf{con}&:\textbf{FIFO1}(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
@@ -175,7 +188,13 @@ On the other hand, for the FIFO1 channel $A-\fbox{\parbox[c][0.2em][c]{1.2em}{\c
 \]
 
 \subsubsection{SyncDrain:}
-An exotic channel in Reo is the synchronous drain channel $A$\st{$\rightarrow\leftarrow$}$B$ that has two source ends. Because a drain has no sink end, no data value can ever be obtained from this channel. Thus, all data items written to this channel are lost. A synchronous drain accepts a data item through one of its ends iff a data item is also available for it to simultaneously accept through
+An exotic channel in Reo is the synchronous drain channel $A\,
+\tikz[baseline=-0.5ex]{
+  \draw [->] (0,0) -- (0.3,0);
+  \draw (0.3,0) -- (0.4,0);
+  \draw[<-] (0.4,0) -- (0.6,0);
+}\,
+B:$ that has two source ends. Because a drain has no sink end, no data value can ever be obtained from this channel. Thus, all data items written to this channel are lost. A synchronous drain accepts a data item through one of its ends iff a data item is also available for it to simultaneously accept through
 another end, the predicate \textbf{true} in the post-condition means the communication terminates.
 \[
 \begin{split}
@@ -186,7 +205,11 @@ another end, the predicate \textbf{true} in the post-condition means the communi
 \]
 
 \subsubsection{LossySync:}
-The lossy synchronous channel $A-\to B$ is similar to a synchronous channel, except that it always accepts all data items through its source end. If it is possible for it to simultaneously dispense the data item through its sink end, the channel transfers the data item.
+The lossy synchronous channel $A\,
+\tikz[baseline=-0.5ex]{
+  \draw [dashed, ->] (0,0) -- (0.5,0)
+}\,
+B:$ is similar to a synchronous channel, except that it always accepts all data items through its source end. If it is possible for it to simultaneously dispense the data item through its sink end, the channel transfers the data item.
 Otherwise the data item is lost.
 \[
 \begin{split}
