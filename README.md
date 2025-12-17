@@ -7,7 +7,7 @@ This repository provides connectors modeling in Z3 and refinement checking scrip
 The modeling of connectors (basic, probabilistic, timer) and refinement checking scripts are in folder `\Models`.
 - `channel.py`: we defined basic channels, probabilistic channels, and timer channels by adding constraints using Z3.
 - `refinement.py`: using the function `isRefinementOf(abstraction, bound)` to check if the connector is a refinement of the abstraction.
-- `automerger.py`: in previous works, we need to specially add a `merge *nodes` to model connectors, which may be inconvenient and easy to make mistakes. Therefore, we implemented an automerger to automatically merge the nodes in the connector.\
+- `automerger.py`: in previous works, we need to specially add `hidden nodes` before merging connectors, as the logic of `merger` function doesn't support directly using original nodes, which may be inconvenient and easy to make mistakes. Therefore, we implemented an `automerger` to automatically add hidden nodes in order to implement `merger` when constructing connectors.\
 Note that you can merge arbitrary many nodes to one sink end rather than simply merging two nodes.
 ## Implementation
 The corresponding scripts for the examples are also in folder `\Models`. We listed several test cases in `test_cases.py`, you can add your own cases into this script following this format:
