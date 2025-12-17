@@ -160,7 +160,7 @@ The simplest form of an asynchronous channel is a FIFO channel with one buffer c
   \draw (0.4,-0.15) rectangle (1,0.15);
   \draw[->] (1,0) -- (1.4,0);
 }\,
-B:$ whose buffer is not full accepts input without immediately outputting it. The accepted data item is kept in the internal FIFO buffer of the channel. The next input can happen only after an output occurs. Note that here we use $(\overrightarrow{b^R})^R<\overrightarrow{a}$ to represent the relationship between the time moments for outputs and their corresponding next inputs.
+B$ whose buffer is not full accepts input without immediately outputting it. The accepted data item is kept in the internal FIFO buffer of the channel. The next input can happen only after an output occurs. Note that here we use $(\overrightarrow{b^R})^R<\overrightarrow{a}$ to represent the relationship between the time moments for outputs and their corresponding next inputs.
 This notation can be simplicified to $b<\overrightarrow{a}$ if we consider infinite sequences of inputs and outputs.\footnote{Note that $(\overrightarrow{b^R})^R<\overrightarrow{a}$ denotes the sequence obtained by removing the $n$-th element from $a$ sequence $b$ with length $n$. For infinite sequences, we have $(\overrightarrow{b^R})^R=b$.}
 \[
 \begin{split}
@@ -178,7 +178,7 @@ On the other hand, for the FIFO1 channel $A\,
   \node at (0.7,0) {$e$};
   \draw[->] (1,0) -- (1.4,0);
 }\,
-B:$ where the buffer contains the data element e, the communication can be initiated only if the data element e can be taken via the sink end. In this case, we have
+B$ where the buffer contains the data element e, the communication can be initiated only if the data element e can be taken via the sink end. In this case, we have
 \[
 \begin{split}
     \textbf{con}&:\textbf{FIFO1}(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
@@ -194,7 +194,7 @@ An exotic channel in Reo is the synchronous drain channel $A\,
   \draw (0.3,0) -- (0.4,0);
   \draw[<-] (0.4,0) -- (0.6,0);
 }\,
-B:$ that has two source ends. Because a drain has no sink end, no data value can ever be obtained from this channel. Thus, all data items written to this channel are lost. A synchronous drain accepts a data item through one of its ends iff a data item is also available for it to simultaneously accept through
+B$ that has two source ends. Because a drain has no sink end, no data value can ever be obtained from this channel. Thus, all data items written to this channel are lost. A synchronous drain accepts a data item through one of its ends iff a data item is also available for it to simultaneously accept through
 another end, the predicate \textbf{true} in the post-condition means the communication terminates.
 \[
 \begin{split}
@@ -209,7 +209,7 @@ The lossy synchronous channel $A\,
 \tikz[baseline=-0.5ex]{
   \draw [dashed, ->] (0,0) -- (0.5,0)
 }\,
-B:$ is similar to a synchronous channel, except that it always accepts all data items through its source end. If it is possible for it to simultaneously dispense the data item through its sink end, the channel transfers the data item.
+B$ is similar to a synchronous channel, except that it always accepts all data items through its source end. If it is possible for it to simultaneously dispense the data item through its sink end, the channel transfers the data item.
 Otherwise the data item is lost.
 \[
 \begin{split}
