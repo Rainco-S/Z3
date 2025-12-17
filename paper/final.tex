@@ -481,7 +481,7 @@ c2 = ['Sync A D', 'Sync D E', 'Sync D F', 'Fifo1 E G', 'Fifo1 F H',
 \end{figure}
 
 \begin{example} % 3. Probability-based test case
-    In the third example, we combine a timer channel and a probabilistic channel to form a complex connector and its mutation as shown in Fig.\ref{fig:c3}. The two connectors are supposed to output a random signal between 0 and 1 after a delay of $t$ time units. The two connectors only differ where the random signal is generated: before or after the delay. Therefore, they are equivalent, i.e., a refinement of each other. In Z3 implementation, we can verify this quivalence by verifying the \verb|True| output of the \verb|isRefinementOf| function in both directions.
+    In the third example, we combine a timer channel and a probabilistic channel to form a complex connector and its mutation as shown in Fig.\ref{fig:c3}. The two connectors are supposed to output a random signal in $\{ 0, 1 \}$ after a delay of $t$ time units. The two connectors only differ in the time when the random signal is generated: before or after the delay. Therefore, they are equivalent, i.e., a refinement of each other. In Z3 implementation, we can verify this quivalence by verifying the \verb|True| output of the \verb|isRefinementOf| function in both directions.
 \end{example}
 \begin{figure}[htbp]
     \input{Figure3}

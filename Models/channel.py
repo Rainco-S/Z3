@@ -273,17 +273,17 @@ class Channel:
     
             time_mismatch = And(
                 Conjunction(constraints_0),
-                Channel.ProbLossy(nodes, p, bound, idx + 1, num)
+                ProbLossyInstance(nodes, bound, idx + 1, num)
             )
     
             loss_prob = And(
                 Conjunction([nodes[0]['time'][idx] == nodes[1]['time'][num]]),
-                Channel.ProbLossy(nodes, p, bound, idx + 1, num)
+                ProbLossyInstance(nodes, bound, idx + 1, num)
             )
     
             success = And(
                 Conjunction(constraints_1),
-                Channel.ProbLossy(nodes, p, bound, idx + 1, num + 1)
+                ProbLossyInstance(nodes, bound, idx + 1, num + 1)
             )
     
             branch_time_match = Or(
