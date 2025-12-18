@@ -28,7 +28,7 @@ test_basic_05 = (
 
 test_basic_06 = (
     ['LossySync A B', 'LossySync A D', 'SyncDrain A C', 'Sync B C', 'Sync D C', 'Merger B D C', 'Sync B E', 'Sync D F'],
-    ['Sync A B', 'LossySync A D', 'SyncDrain A C', 'Sync B C', 'Sync D C', 'Merger B D C', 'Sync B E', 'Sync D F']
+    ['Sync A B', 'Sync A D', 'SyncDrain A C', 'Sync B C', 'Sync D C', 'Merger B D C', 'Sync B E', 'Sync D F']
 )
 
 test_basic_07 = (

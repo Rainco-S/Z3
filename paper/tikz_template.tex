@@ -81,9 +81,7 @@
 % Complex Timer (with Control Ports OFF/RESET/EXPIRE)
 % Parameters: #1=start end, #2=end end, #3=delay time t, #4=control type(OFF/RST/EXP)
 \newcommand{\drawComplexTimer}[4]{
-    % 先画基础 Timer
     \draw[reoEdge] (#1) -- node[draw, fill=white, circle, minimum size=3.5mm, inner sep=1pt, font=\small] (timerbox) {#3} (#2);
-    % 画控制端口
     \coordinate(ctrl) at ($(#1)!0.35!(#2)$);
     \ifthenelse{\equal{#4}{OFF}}{
         \node[circle, draw, fill=white, minimum size=1mm, inner sep=0pt] (ctrl) at (ctrl) {};
@@ -110,7 +108,7 @@
 \newcommand{\chanFifoOne}[2]{\drawFIFO{#1}{#2}{}} % Buffer size 1
 \newcommand{\chanFifoN}[3]{\drawFIFO{#1}{#2}{$N=#3$}} % Buffer size n
 \newcommand{\chanFifoOneE}[3]{\drawFIFO{#1}{#2}{$#3$}} % Initialized with e
-\newcommand{\chanFifoNE}[4]{\drawFIFO{#1}{#2}{$#3$}} % Initialized e with size n
+\newcommand{\chanFifoNE}[3]{\drawFIFO{#1}{#2}{$#3$}} % Initialized e with size n
 % --- 3. Filter & Producer ---
 \newcommand{\chanFilterP}[3]{\drawFilter{#1}{#2}{$#3$}} 
 \newcommand{\chanProducerP}[3]{\drawLink{#1}{#2}{Prod: $#3$}} 

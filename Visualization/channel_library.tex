@@ -1,0 +1,117 @@
+\documentclass[tikz, border=10pt]{standalone}
+\usepackage{tikz}
+
+\input{tikz_template}
+
+\begin{document}
+
+\begin{tikzpicture}[x=3cm, y=1.5cm]
+    
+    % 1. Sync
+    \node[node0, label=above left:A] (A1) at (0,0) {}; \node[node0, label=above right:B] (B1) at (1,0) {};
+    \chanSync{A1}{B1}
+    \node at (0.5, -0.3) {1. Sync};
+
+    % 2. Fifo1
+    \node[node0, label=above left:A] (A2) at (0,-1) {}; \node[node0, label=above right:B] (B2) at (1,-1) {};
+    \chanFifoOne{A2}{B2}
+    \node at (0.5, -1.3) {2. Fifo1};
+
+    % 3. Fifon
+    \node[node0, label=above left:A] (A3) at (0,-2) {}; \node[node0, label=above right:B] (B3) at (1,-2) {};
+    \chanFifoN{A3}{B3}{n}
+    \node at (0.5, -2.3) {3. Fifon(n)};
+
+    % 4. Fifo1e
+    \node[node0, label=above left:A] (A4) at (0,-3) {}; \node[node0, label=above right:B] (B4) at (1,-3) {};
+    \chanFifoOneE{A4}{B4}{e}
+    \node at (0.5, -3.3) {4. Fifo1e(e)};
+
+    % 5. Fifone
+    \node[node0, label=above left:A] (A5) at (0,-4) {}; \node[node0, label=above right:B] (B5) at (1,-4) {};
+    \chanFifoNE{A5}{B5}{N = n, e}
+    \node at (0.5, -4.3) {5. Fifone(n, e)};
+
+    % 6. SyncDrain
+    \node[node0, label=above left:A] (A6) at (2,0) {}; \node[node0, label=above right:B] (B6) at (3,0) {};
+    \chanSyncDrain{A6}{B6}
+    \node at (2.5, -0.3) {6. SyncDrain};
+
+    % 7. LossySync
+    \node[node0, label=above left:A] (A7) at (2,-1) {}; \node[node0, label=above right:B] (B7) at (3,-1) {};
+    \chanLossySync{A7}{B7}
+    \node at (2.5, -1.3) {7. LossySync};
+
+    % 8. Filterp
+    \node[node0, label=above left:A] (A8) at (2,-2) {}; \node[node0, label=above right:B] (B8) at (3,-2) {};
+    \chanFilterP{A8}{B8}{P}
+    \node at (2.5, -2.3) {8. Filter(P)};
+
+    % 9. Producerp
+    \node[node0, label=above left:A] (A9) at (2,-3) {}; \node[node0, label=above right:B] (B9) at (3,-3) {};
+    \chanProducerP{A9}{B9}{P}
+    \node at (2.5, -3.3) {9. Producer(P)};
+
+    % 10. AsynSpout
+    \node[node0, label=above left:A] (A10) at (2,-4) {}; \node[node0, label=above right:B] (B10) at (3, -4) {};
+    \chanAsynSpout{A10}{B10}
+    \node at (2.5, -4.3) {10. AsynSpout};
+
+    % 11. AsynDrain
+    \node[node0, label=above left:A] (A11) at (4,0) {}; \node[node0, label=above right:B] (B11) at (5,0) {};
+    \chanAsynDrain{A11}{B11}
+    \node at (4.5, -0.3) {11. AsynDrain};
+
+    % 12. SyncSpout
+    \node[node0, label=above left:A] (A12) at (4, -1) {}; \node[node0, label=above right:B] (B12) at (5, -1) {};
+    \chanSyncSpout{A12}{B12}
+    \node at (4.5, -1.3) {12. SyncSpout};
+
+    % 13. CptSync
+    \node[node0, label=above left:A] (A13) at (4,-2) {}; \node[node0, label=above right:B] (B13) at (5,-2) {};
+    \chanCptSync{A13}{B13}{p}
+    \node at (4.5, -2.3) {13. CptSync};
+
+    % 14. RdmSync
+    \node[node0, label=above left:A] (A14) at (4,-3) {}; \node[node0, label=above right:B] (B14) at (5,-3) {};
+    \chanRdmSync{A14}{B14}{rand(0, 1)}
+    \node at (4.5, -3.3) {14. RdmSync};
+
+    % 15. ProbLossy
+    \node[node0, label=above left:A] (A15) at (4,-4) {}; \node[node0, label=above right:B] (B15) at (5,-4) {};
+    \chanProbLossy{A15}{B15}{p}
+    \node at (4.5, -4.3) {15. ProbLossy};
+
+    % 16. FtyFifo1
+    \node[node0, label=above left:A] (A16) at (6,0) {}; \node[node0, label=above right:B] (B16) at (7,0) {};
+    \chanFtyFifoOne{A16}{B16}{p}
+    \node at (6.5, -0.3) {16. FtyFifo1};
+
+    % 17. LossyFifo1
+    \node[node0, label=above left:A] (A17) at (6,-1) {}; \node[node0, label=above right:B] (B17) at (7,-1) {};
+    \chanLossyFifoOne{A17}{B17}{p}
+    \node at (6.5, -1.3) {17. LossyFifo1};
+
+    % 18. Timert
+    \node[node0, label=above left:A] (A18) at (6,-2) {}; \node[node0, label=above right:B] (B18) at (7,-2) {};
+    \chanTimert{A18}{B18}{t}
+    \node at (6.5, -2.3) {18. Timert};
+
+    % 19. OFFTimert
+    \node[node0, label=above left:A] (A19) at (6,-3) {}; \node[node0, label=above right:B] (B19) at (7,-3) {};
+    \chanOFFTimert{A19}{B19}{t}
+    \node at (6.5, -3.3) {19. OFFTimert};
+
+    % 20. RSTTimert
+    \node[node0, label=above left:A] (A20) at (6,-4) {}; \node[node0, label=above right:B] (B20) at (7,-4) {};
+    \chanRSTTimert{A20}{B20}{t}
+    \node at (6.5, -4.3) {20. RSTTimert};
+
+    % 21. EXPTimert
+    \node[node0, label=above left:A] (A21) at (8,0) {}; \node[node0, label=above right:B] (B21) at (9,0) {};
+    \chanEXPTimert{A21}{B21}{t}
+    \node at (8.5, -0.3) {21. EXPTimert};
+
+\end{tikzpicture}
+
+\end{document}
