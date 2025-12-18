@@ -1,3 +1,4 @@
+\usepackage{ifthen}
 \usetikzlibrary{arrows, decorations.pathmorphing, decorations.markings, shapes.geometric, calc, positioning}
 
 \tikzset{
@@ -9,19 +10,41 @@
     reoWavy/.style={->, >=latex, thin, decorate, decoration={zigzag, amplitude=1mm, segment length=1.5mm, post length=1.5mm, pre length=1.5mm}},
 }
 
-% A. Basic Connectors (Sync, Lossy, Filter)
+% Basic Connectors (Sync, Lossy, Filter)
 % Parameters: #1=style(optional), #2=source end, #3=sink end, #4=label text(optional)
 \newcommand{\drawLink}[4][reoEdge]{
     \draw[#1] (#2) -- node[above, font=\scriptsize] {#4} (#3);
 }
 
-% B. FIFO (with Box in the Middle)
-% Parameters: #1=source end, #2=sink end, #3=text inside box, #4=extra style(optional, e.g. dashed)
-\newcommand{\drawFIFO}[4][]{
-    \draw[reoEdge, #1] (#2) -- node[midway, sloped, allow upside down, draw, fill=white, rectangle, minimum width = 6mm, minimum height = 2mm, inner sep=1pt, font=\tiny] {#4} (#3);
+\newcommand{\drawLinkMid}[4][]{
+    \draw[reoEdge, #1] (#2) -- node[font=\scriptsize, fill=white] {#4} (#3);
 }
 
-% C. Drain (Two Sources to One Sink)
+% FIFO (with Box in the Middle)
+% Parameters: #1=source end, #2=sink end, #3=text inside box, #4=extra style(optional, e.g. dashed)
+\newcommand{\drawFIFO}[4][]{
+    \draw[reoEdge, #1] (#2) -- node[midway, sloped, allow upside down, draw, fill=white, rectangle, minimum width=6mm, minimum height=2mm, inner sep=1pt, font=\tiny] {#4} (#3);
+}
+
+% Complex FIFO (with different styles before and after the box)
+% Parameters: #1=source end, #2=sink end, #3=text inside box, #4=style before box, #5=style after box
+\newcommand{\drawComplexFIFO}[6]{
+    \node[sloped, allow upside down, draw, fill=white, rectangle, minimum width=6mm, minimum height=2mm, inner sep=1pt, font=\tiny] (mid) at ($(#1)!0.5!(#2)$) {};
+    \draw[thin, #3] (#1) -- node[above, font=\scriptsize] {$#4$} (mid);
+    \draw[reoEdge, #5] (mid) -- node[above, font=\scriptsize] {$#6$} (#2);
+}
+
+% Filter (with zigzag line)
+% Parameters: #1=source end, #2=sink end, #3=filter label text
+\newcommand{\drawFilter}[3]{
+    \coordinate (mid1) at ($(#1)!0.3!(#2)$);
+    \coordinate (mid2) at ($(#1)!0.7!(#2)$);
+    \draw[thin] (#1) -- (mid1);
+    \draw[thin, decorate, decoration={zigzag, amplitude=1mm, segment length=1.5mm, post length=1.5mm, pre length=1.5mm}] (mid1) -- node[above, yshift=1mm, font=\scriptsize] {#3} (mid2);
+    \draw[->, >=latex, thin] (mid2) -- (#2);
+}
+
+% Drain (Two Sources to One Sink)
 % Parameters: #1=source end 1, #2=source end 2, #3=sink end, #4=center symbol(usually ||), #5=center symbol(usually ||)
 \newcommand{\drawDrain}[5]{
     % Calculate midpoints
@@ -40,7 +63,7 @@
     % Actually Drain doesn't have an explicit Sink node, so #3 is just for position logic or if you want to draw only lines
 }
 
-% D. Spout (One Source to Two Sinks)
+% Spout (One Source to Two Sinks)
 % Parameters: #1=source end, #2=sink end 1, #3=sink end 2, #4=center symbol(usually ||), #5=center symbol(usually ||)
 \newcommand{\drawSpout}[5]{
     % Calculate midpoints
@@ -59,20 +82,32 @@
     % Actually Spout doesn't have an explicit Sink node, so #3 is just for position logic or if you want to draw only lines
 }
 
-% E. Timer (Middle with Rounded Box)
+% Timer (Middle with Rounded Box)
 % Parameters: #1=start end, #2=end end, #3=delay time t
 \newcommand{\drawTimer}[3]{
     \draw[reoEdge] (#1) -- node[draw, fill=white, rectangle, rounded corners=2pt, minimum size=3.5mm, inner sep=1pt, font=\tiny] (timerbox) {#3} (#2);
 }
 
-% F. Complex Timer (with Control Ports OFF/RESET/EXPIRE)
-% Parameters: #1=start end, #2=end end, #3=delay time t, #4=control type(OFF/RST/EXP), #5=control node position(above/below)
-\newcommand{\drawComplexTimer}[5]{
+% Complex Timer (with Control Ports OFF/RESET/EXPIRE)
+% Parameters: #1=start end, #2=end end, #3=delay time t, #4=control type(OFF/RST/EXP)
+\newcommand{\drawComplexTimer}[4]{
     % 先画基础 Timer
     \draw[reoEdge] (#1) -- node[draw, fill=white, rectangle, rounded corners=2pt, minimum size=3.5mm, inner sep=1pt, font=\tiny] (timerbox) {#3} (#2);
     % 画控制端口
-    \node (ctrl) [#5=0.5cm of timerbox, font=\tiny] {#4};
-    \draw[->, >=latex, dashed] (ctrl) -- (timerbox);
+    \coordinate(ctrl) at ($(#1)!0.35!(#2)$);
+    \ifthenelse{\equal{#4}{OFF}}{
+        \node[circle, draw, minimum size=1mm, inner sep=0pt] (ctrl) at (ctrl) {};
+    }{}
+    \ifthenelse{\equal{#4}{RST}}{
+        \node[sloped, allow upside down, inner sep=0pt] at (ctrl) {
+            \tikz[baseline] \draw[->, thin] (0,0) -- (0, 0.2) -- (-0.1, 0.2);
+        };
+    }{}
+    \ifthenelse{\equal{#4}{EXP}}{
+        \node[sloped, allow upside down, inner sep=0pt] at (ctrl) {
+            \tikz[baseline] \draw[->, thin] (0,0) -- (0, 0.2) -- (0.1, 0.2);
+        };
+    }{}
 }
 
 
@@ -87,19 +122,19 @@
 \newcommand{\chanFifoOneE}[3]{\drawFIFO{#1}{#2}{$#3$}} % Initialized with e
 \newcommand{\chanFifoNE}[4]{\drawFIFO{#1}{#2}{$#3$}} % Initialized e with size n
 % --- 3. Filter & Producer ---
-\newcommand{\chanFilterP}[3]{\drawLink[reoWavy]{#1}{#2}{$P(#3)$}} 
+\newcommand{\chanFilterP}[3]{\drawFilter{#1}{#2}{$#3$}} 
 \newcommand{\chanProducerP}[3]{\drawLink{#1}{#2}{Prod: $#3$}} 
 % --- 4. Spouts ---
 \newcommand{\chanSyncSpout}[2]{\drawSpout{#1}{#2}{}{}{}}
 \newcommand{\chanAsynSpout}[2]{\drawSpout{#1}{#2}{$||$}{}{}}
 % --- 5. Probabilistic/Faulty ---
-\newcommand{\chanCptSync}[3]{\drawLink{#1}{#2}{$p=#3$}} % Corrupting Sync
+\newcommand{\chanCptSync}[3]{\drawLinkMid[dashed]{#1}{#2}{#3}} % Corrupting Sync
 \newcommand{\chanRdmSync}[3]{\drawLink{#1}{#2}{#3}} % Random Sync
-\newcommand{\chanProbLossy}[3]{\drawLink[reoLossy]{#1}{#2}{$p=#3$}} % Probabilistic Lossy
-\newcommand{\chanFtyFifoOne}[3]{\drawFIFO{#1}{#2}{Fty:$#3$}} % Faulty FIFO
-\newcommand{\chanLossyFifoOne}[3]{\drawFIFO[dashed]{#1}{#2}{Lossy:$#3$}} % Lossy FIFO
+\newcommand{\chanProbLossy}[3]{\drawLink[reoLossy]{#1}{#2}{#3}} % Probabilistic Lossy
+\newcommand{\chanFtyFifoOne}[3]{\drawComplexFIFO{#1}{#2}{dashed}{#3}{}{}} % Faulty FIFO
+\newcommand{\chanLossyFifoOne}[3]{\drawComplexFIFO{#1}{#2}{}{}{dashed}{#3}} % Lossy FIFO
 % --- 6. Timers ---
 \newcommand{\chanTimert}[3]{\drawTimer{#1}{#2}{#3}}
-\newcommand{\chanOFFTimert}[3]{\drawComplexTimer{#1}{#2}{#3}{OFF}{above}}
-\newcommand{\chanRSTTimert}[3]{\drawComplexTimer{#1}{#2}{#3}{RST}{above}}
-\newcommand{\chanEXPTimert}[3]{\drawComplexTimer{#1}{#2}{#3}{EXP}{above}}
+\newcommand{\chanOFFTimert}[3]{\drawComplexTimer{#1}{#2}{#3}{OFF}}
+\newcommand{\chanRSTTimert}[3]{\drawComplexTimer{#1}{#2}{#3}{RST}}
+\newcommand{\chanEXPTimert}[3]{\drawComplexTimer{#1}{#2}{#3}{EXP}}
