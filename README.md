@@ -28,15 +28,15 @@ cd Models
 ```
 Then you can run the following command to check all the test cases in `test_cases.py`
 ```bash
-python \main.py --list
+python main.py --list
 ```
 If you want to check through all the test cases, you can run:
 ```bash
-python \main.py --all
+python main.py --all
 ```
 If you only want to check a specific test case, for example `test_basic_01`, in `test_cases.py`, you can run the following command:
 ```bash
-python \main.py test_basic_01
+python main.py test_basic_01
 ```
 Terminal will return the results in the form of
 ```bash
