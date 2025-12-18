@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2024.10.2)  18 DEC 2025 11:32
+This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2024.10.2)  18 DEC 2025 13:39
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -696,49 +696,46 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 33.
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
-] [2] [3] [4] [5] [6] [7] [8] [9]
-LaTeX Font Info:    Trying to load font information for OMS+lmr on input line 308.
- (d:/texlive/2024/texmf-dist/tex/latex/lm/omslmr.fd
-File: omslmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
-LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 308.
- (d:/texlive/2024/texmf-dist/tex/latex/lm/omslmsy.fd
-File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
-LaTeX Font Info:    Font shape `OMS/lmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/lmsy/m/n' tried instead on input line 308.
- [10] [11] [12] [13] [14] (./Figure_automerger.tex) [15] [16]
-Overfull \hbox (4.62646pt too wide) in paragraph at lines 490--490
+] [2] [3] [4] [5] [6]
+Overfull \hbox (23.44893pt too wide) in paragraph at lines 190--196
+ []\TU/lmr/bx/n/10 SyncDrain:[] \TU/lmr/m/n/10 An exotic channel in Reo is the synchronous drain channel []
+ []
+
+[7] [8] [9]
+Overfull \hbox (14.64166pt too wide) in paragraph at lines 321--325
+ []\TU/lmr/bx/n/10 FtyFIFO1:[] \TU/lmr/m/n/10 The messages flowing into a faulty FIFO1 channel []
+ []
+
+
+Overfull \hbox (2.72061pt too wide) in paragraph at lines 326--331
+[]\TU/lmr/m/n/10 A mutation of this channel named \TU/lmr/bx/n/10 LossyFIFO1 \TU/lmr/m/n/10 channel []
+ []
+
+[10] [11] [12] [13] [14] (./Figure_automerger.tex) [15] [16]
+Overfull \hbox (4.62646pt too wide) in paragraph at lines 542--542
 []\TU/lmtt/m/n/10 c1 = ['Sync A D', 'Sync D E', 'Sync D F', 'Fifo1 E B', 'Fifo1 F C'][] 
  []
 
 
-Overfull \hbox (4.62646pt too wide) in paragraph at lines 490--490
+Overfull \hbox (4.62646pt too wide) in paragraph at lines 542--542
 []\TU/lmtt/m/n/10 c2 = ['Sync A D', 'Sync D E', 'Sync D F', 'Fifo1 E G', 'Fifo1 F H',[] 
  []
 
-(./Figure1.tex) (./Figure2.tex) (./Figure3.tex) [17] [18] (./final.bbl [19]) [20] (./final.aux)
+(./Figure1.tex) [17] (./Figure2.tex) (./Figure3.tex) [18] (./final.bbl [19]) [20] (./final.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-02-20>
  ***********
-
-
-Package rerunfilecheck Warning: File `final.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `final.out':
-(rerunfilecheck)             Before: FE149E28D88FB11120583F813401C7A3;406
-(rerunfilecheck)             After:  CC53B68600796698358DC1537681206E;405.
+Package rerunfilecheck Info: File `final.out' has not changed.
+(rerunfilecheck)             Checksum: CC53B68600796698358DC1537681206E;405.
  ) 
 Here is how much of TeX's memory you used:
- 23723 strings out of 474773
- 451638 string characters out of 5761289
- 1962842 words of memory out of 5000000
- 45420 multiletter control sequences out of 15000+600000
- 564046 words of font info for 84 fonts, out of 8000000 for 9000
+ 23720 strings out of 474773
+ 451803 string characters out of 5761289
+ 1967842 words of memory out of 5000000
+ 45424 multiletter control sequences out of 15000+600000
+ 563743 words of font info for 83 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 84i,34n,93p,1173b,926s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,34n,93p,1173b,1068s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on final.pdf (20 pages).

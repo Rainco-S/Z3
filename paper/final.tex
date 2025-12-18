@@ -144,7 +144,11 @@ where \textbf{R} is the name of the connector, $P(in_\textbf{R})$ is the precond
 \subsection{Basic connectors}
 We first develop the design model for a set of basic Reo connectors, i.e., channels.
 \subsubsection{Sync:}
-The synchronous channel $A\longrightarrow B$ transfers the data without delay in time. So it behaves just as the identity function. The pair of I/O operations on its two ends can succeed only simultaneously, and the input is not taken until the output can be delivered, which is captured by the variable $ok$.
+The synchronous channel \tikz[baseline=-0.8ex]{
+    \node[node0, label=left:A] (A) at (0, 0){}; 
+    \node[node0, label=right:B] (B) at (1, 0) {}; 
+    \chanSync{A}{B}
+} transfers the data without delay in time. So it behaves just as the identity function. The pair of I/O operations on its two ends can succeed only simultaneously, and the input is not taken until the output can be delivered, which is captured by the variable $ok$.
 \[
 \begin{split}
     \textbf{con}&:\textbf{Sync}(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
@@ -154,13 +158,11 @@ The synchronous channel $A\longrightarrow B$ transfers the data without delay in
 \]
 
 \subsubsection{FIFO1:}
-The simplest form of an asynchronous channel is a FIFO channel with one buffer cell, which is denoted as FIFO1. The FIFO1 channel $A\,
-\tikz[baseline=-0.5ex]{
-  \draw (0,0) -- (0.4,0);
-  \draw (0.4,-0.15) rectangle (1,0.15);
-  \draw[->] (1,0) -- (1.4,0);
-}\,
-B$ whose buffer is not full accepts input without immediately outputting it. The accepted data item is kept in the internal FIFO buffer of the channel. The next input can happen only after an output occurs. Note that here we use $(\overrightarrow{b^R})^R<\overrightarrow{a}$ to represent the relationship between the time moments for outputs and their corresponding next inputs.
+The simplest form of an asynchronous channel is a FIFO channel with one buffer cell, which is denoted as FIFO1. The FIFO1 channel \tikz[baseline=-0.8ex]{
+    \node[node0, label=left:A] (A) at (0, 0){}; 
+    \node[node0, label=right:B] (B) at (1.5, 0) {}; 
+    \chanFifoOne{A}{B}
+} whose buffer is not full accepts input without immediately outputting it. The accepted data item is kept in the internal FIFO buffer of the channel. The next input can happen only after an output occurs. Note that here we use $(\overrightarrow{b^R})^R<\overrightarrow{a}$ to represent the relationship between the time moments for outputs and their corresponding next inputs.
 This notation can be simplicified to $b<\overrightarrow{a}$ if we consider infinite sequences of inputs and outputs.\footnote{Note that $(\overrightarrow{b^R})^R<\overrightarrow{a}$ denotes the sequence obtained by removing the $n$-th element from $a$ sequence $b$ with length $n$. For infinite sequences, we have $(\overrightarrow{b^R})^R=b$.}
 \[
 \begin{split}
@@ -171,14 +173,11 @@ This notation can be simplicified to $b<\overrightarrow{a}$ if we consider infin
 \]
 
 \subsubsection{FIFO1e:}
-On the other hand, for the FIFO1 channel $A\,
-\tikz[baseline=-0.5ex]{
-  \draw (0,0) -- (0.4,0);
-  \draw (0.4,-0.15) rectangle (1,0.15);
-  \node at (0.7,0) {$e$};
-  \draw[->] (1,0) -- (1.4,0);
-}\,
-B$ where the buffer contains the data element e, the communication can be initiated only if the data element e can be taken via the sink end. In this case, we have
+On the other hand, for the FIFO1 channel \tikz[baseline=-0.8ex]{
+    \node[node0, label=left:A] (A) at (0, 0){}; 
+    \node[node0, label=right:B] (B) at (1.5, 0) {}; 
+    \chanFifoOneE{A}{B}{e}
+} where the buffer contains the data element e, the communication can be initiated only if the data element e can be taken via the sink end. In this case, we have
 \[
 \begin{split}
     \textbf{con}&:\textbf{FIFO1}(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
@@ -188,13 +187,11 @@ B$ where the buffer contains the data element e, the communication can be initia
 \]
 
 \subsubsection{SyncDrain:}
-An exotic channel in Reo is the synchronous drain channel $A\,
-\tikz[baseline=-0.5ex]{
-  \draw [->] (0,0) -- (0.3,0);
-  \draw (0.3,0) -- (0.4,0);
-  \draw[<-] (0.4,0) -- (0.6,0);
-}\,
-B$ that has two source ends. Because a drain has no sink end, no data value can ever be obtained from this channel. Thus, all data items written to this channel are lost. A synchronous drain accepts a data item through one of its ends iff a data item is also available for it to simultaneously accept through
+An exotic channel in Reo is the synchronous drain channel \tikz[baseline=-0.8ex]{
+    \node[node0, label=left:A] (A) at (0, 0){}; 
+    \node[node0, label=right:B] (B) at (1, 0) {}; 
+    \chanSyncDrain{A}{B}
+} that has two source ends. Because a drain has no sink end, no data value can ever be obtained from this channel. Thus, all data items written to this channel are lost. A synchronous drain accepts a data item through one of its ends iff a data item is also available for it to simultaneously accept through
 another end, the predicate \textbf{true} in the post-condition means the communication terminates.
 \[
 \begin{split}
@@ -205,11 +202,11 @@ another end, the predicate \textbf{true} in the post-condition means the communi
 \]
 
 \subsubsection{LossySync:}
-The lossy synchronous channel $A\,
-\tikz[baseline=-0.5ex]{
-  \draw [dashed, ->] (0,0) -- (0.5,0)
-}\,
-B$ is similar to a synchronous channel, except that it always accepts all data items through its source end. If it is possible for it to simultaneously dispense the data item through its sink end, the channel transfers the data item.
+The lossy synchronous channel \tikz[baseline=-0.8ex]{
+    \node[node0, label=left:A] (A) at (0, 0){}; 
+    \node[node0, label=right:B] (B) at (1, 0) {}; 
+    \chanLossySync{A}{B}
+} is similar to a synchronous channel, except that it always accepts all data items through its source end. If it is possible for it to simultaneously dispense the data item through its sink end, the channel transfers the data item.
 Otherwise the data item is lost.
 \[
 \begin{split}
@@ -230,7 +227,11 @@ where
 \]
 
 \subsubsection{Filter:}
-The filter channel $A-\{p\}\to B$ specifies a filter pattern $p$ which is a set of data values. It transfers only those data items that match with the pattern $p$ and loses the rest. A write operation on the source end succeeds only if either the data item to be written does not match with the pattern $p$ or the data item matches the pattern $p$ and it can be taken synchronously via the sink end of the channel.
+The filter channel \tikz[baseline=-0.8ex]{
+    \node[node0, label=left:A] (A) at (0, 0){}; 
+    \node[node0, label=right:B] (B) at (1.5, 0) {}; 
+    \chanFilterP{A}{B}{p}
+} specifies a filter pattern $p$ which is a set of data values. It transfers only those data items that match with the pattern $p$ and loses the rest. A write operation on the source end succeeds only if either the data item to be written does not match with the pattern $p$ or the data item matches the pattern $p$ and it can be taken synchronously via the sink end of the channel.
 \[
 \begin{split}
     \textbf{con}&:\textbf{Filter}p(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
@@ -248,7 +249,11 @@ where $F(\langle\alpha,a\rangle,\langle\beta,b\rangle)\equiv$
 \]
 
 \subsubsection{p-Producer:}
-The p-Producer channel $A-$\st{$p$}$\to B$ specifies a producer pattern p which is a set of data values. Once it accepts a data item from the source end, it produces a data item in the set $p$ which is taken synchronously via the sink end.
+The p-Producer channel \tikz[baseline=-0.8ex]{
+    \node[node0, label=left:A] (A) at (0, 0){}; 
+    \node[node0, label=right:B] (B) at (1.5, 0) {}; 
+    \chanProducerP{A}{B}{p}
+} specifies a producer pattern p which is a set of data values. Once it accepts a data item from the source end, it produces a data item in the set $p$ which is taken synchronously via the sink end.
 \[
 \begin{split}
     \textbf{con}&:\textbf{Producer}p(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
@@ -258,7 +263,11 @@ The p-Producer channel $A-$\st{$p$}$\to B$ specifies a producer pattern p which 
 \]
 
 \subsubsection{AsynSpout:}
-The asynchronous spout channel $A\leftarrow$\st{$\parallel$}$\to B$ outputs two sequences of data items at its two output (sink) ends, but the data items on the two ends are never delivered at the same time.
+The asynchronous spout channel \tikz[baseline=-0.8ex]{
+    \node[node0, label=left:A] (A) at (0, 0){}; 
+    \node[node0, label=right:B] (B) at (1.5, 0) {}; 
+    \chanAsynSpout{A}{B}
+} outputs two sequences of data items at its two output (sink) ends, but the data items on the two ends are never delivered at the same time.
 \[
 \begin{split}
     \textbf{con}&:\textbf{AsynSpout}(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
@@ -274,28 +283,60 @@ a\bowtie b\equiv a=()\lor b=()\lor\left(a(0)\neq b(0)\lor\begin{cases}
 \end{cases}\right)
 \]
 
-The \textbf{asynchronous drain} channel $A\to\leftarrow B$ inputs two sequences of data items at its two input (source) ends, but the data items on the two ends are never delivered at the same time. Moreover, the \textbf{synchronous spout} channel $A\leftarrow\mapsto B$ has two sink ends, and outputs data sequence simultaneously, i.e., the two ends must deliver data items at the same time. Similar to the definition for synchronous drain and asynchronous spout, we can easily derive the design models for asynchronous drain and synchronous spout channels as well, which we skip here.
+The \textbf{asynchronous drain} channel \tikz[baseline=-0.8ex]{
+    \node[node0, label=left:A] (A) at (0, 0){}; 
+    \node[node0, label=right:B] (B) at (1.5, 0) {}; 
+    \chanAsynDrain{A}{B}
+} inputs two sequences of data items at its two input (source) ends, but the data items on the two ends are never delivered at the same time. Moreover, the \textbf{synchronous spout} channel \tikz[baseline=-0.8ex]{
+    \node[node0, label=left:A] (A) at (0, 0){}; 
+    \node[node0, label=right:B] (B) at (1.5, 0) {}; 
+    \chanSyncSpout{A}{B}
+} has two sink ends, and outputs data sequence simultaneously, i.e., the two ends must deliver data items at the same time. Similar to the definition for synchronous drain and asynchronous spout, we can easily derive the design models for asynchronous drain and synchronous spout channels as well, which we skip here.
 
 \subsection{Probabilistic connectors}
 The specification of channels with probabilistic behavior can be captured by the disjunction or conjunction of different predicates about time and data distributions. We consider four types of probabilistic channels: \textit{message-corrupting synchronous channel}, \textit{randomized synchronous channel}, \textit{probabilistic lossy synchronous channel}, and \textit{faulty FIFO1 channel}. Specifications of other primitive channels are ignored here and can be found at \cite{Prob_Reo}.
 
 \subsubsection{CptSync:}
-The message-corrupting synchronous channel $A\xrightarrow{p}B$ is a synchronous channel which has an extra parameter $p$ compared with the primitive synchronous channel. The delivered message can be corrupted with probability $p$. Hence, if a data item flows into the channel through the source end, then the correct data value will be obtained at the sink end with probability $1-p$ and a corrupted data value $\perp$ will be obtained with probability $p$.
+The message-corrupting synchronous channel \tikz[baseline=-0.8ex]{
+    \node[node0, label=left:A] (A) at (0, 0){}; 
+    \node[node0, label=right:B] (B) at (1.5, 0) {}; 
+    \chanCptSync{A}{B}{p}
+} is a synchronous channel which has an extra parameter $p$ compared with the primitive synchronous channel. The delivered message can be corrupted with probability $p$. Hence, if a data item flows into the channel through the source end, then the correct data value will be obtained at the sink end with probability $1-p$ and a corrupted data value $\perp$ will be obtained with probability $p$.
 
-\subsubsection{RandomSync:}
-The randomized synchronous channel $A\xrightarrow{rand(0,1)}B$ can generate a random number $b\in\{0,1\}$ with equal probability when it is activated through an arbitrary write operation on its source end, and this random number will be taken on the sink end simultaneously.
+\subsubsection{RdmSync:}
+The randomized synchronous channel \tikz[baseline=-0.8ex]{
+    \node[node0, label=left:A] (A) at (0, 0){}; 
+    \node[node0, label=right:B] (B) at (1.5, 0) {}; 
+    \chanRdmSync{A}{B}{rand(0, 1)}
+} can generate a random number $b\in\{0,1\}$ with equal probability when it is activated through an arbitrary write operation on its source end, and this random number will be taken on the sink end simultaneously.
 
-\subsubsection{ProbSync:}
-The message transmitted by the probabilistic synchronous channel $A-\overset{q}{-}\to B$ can get lost with a certain probability $q$. It can also act like a \textit{Sync} channel and the message will be delivered successfully with probability $1-q$.
+\subsubsection{ProbLossy:}
+The message transmitted by the probabilistic lossy synchronous channel \tikz[baseline=-0.8ex]{
+    \node[node0, label=left:A] (A) at (0, 0){}; 
+    \node[node0, label=right:B] (B) at (1, 0) {}; 
+    \chanProbLossy{A}{B}{q}
+} can get lost with a certain probability $q$. It can also act like a \textit{Sync} channel and the message will be delivered successfully with probability $1-q$.
 
-\subsubsection{FaultyFIFO1:}
-The messages flowing into a faulty FIFO1 channel $A\overset{r}{\cdots}{\setlength{\fboxsep}{1pt}\fbox{\vphantom{x}\hphantom{X}}}\to B$ can get lost with probability $r$ when it is inserted into the buffer. In this case, the buffer remains empty. It can also behave as a normal \textit{FIFO1} channel when the insertion of data into the buffer is successful with probability $1-r$.\par
-Another kind of faulty FIFO1 channel named \textbf{LossyFIFO1} channel $A\to{\setlength{\fboxsep}{1pt}\fbox{\vphantom{x}\hphantom{X}}}\overset{r}{\cdots}B$ works perfectly on the insertion of data item into its buffer but may loose messages from the buffer before being taken on the sink end. The difference between this channel and FtyFIFO1 is that the loss of data items happens in different steps. Loss behavior in this channel arises in the process of being taken from the buffer, while loss behavior in FtyFIFO1 arises in the process of storage into the buffer.
+\subsubsection{FtyFIFO1:}
+The messages flowing into a faulty FIFO1 channel \tikz[baseline=-0.8ex]{
+    \node[node0, label=left:A] (A) at (0, 0){}; 
+    \node[node0, label=right:B] (B) at (2, 0) {}; 
+    \chanFtyFifoOne{A}{B}{r}
+} can get lost with probability $r$ when it is inserted into the buffer. In this case, the buffer remains empty. It can also behave as a normal \textit{FIFO1} channel when the insertion of data into the buffer is successful with probability $1-r$.\par
+A mutation of this channel named \textbf{LossyFIFO1} channel \tikz[baseline=-0.8ex]{
+    \node[node0, label=left:A] (A) at (0, 0){}; 
+    \node[node0, label=right:B] (B) at (2, 0) {}; 
+    \chanLossyFifoOne{A}{B}{r}
+} works perfectly on the insertion of data item into its buffer but may loose messages from the buffer before being taken on the sink end. The difference between this channel and FtyFIFO1 is that the loss of data items happens in different steps. Loss behavior in this channel arises in the process of being taken from the buffer, while loss behavior in FtyFIFO1 arises in the process of storage into the buffer.
 
 \subsection{Timer connectors}
 We now describe the design models of a few timer channels in Reo that can serve to measure the time between two events and produce timeout signals.
 \subsubsection{t-Timer:}
-The source end of a $t$-timer channal $A-\overset{t}{\circ}\to B$ accepts any input value $d$ and returns on its sink end $B$ a timeout signal after a delay of $t$ time units.
+The source end of a $t$-timer channal \tikz[baseline=-0.8ex]{
+    \node[node0, label=left:A] (A) at (0, 0){}; 
+    \node[node0, label=right:B] (B) at (1.5, 0) {}; 
+    \chanTimert{A}{B}{t}
+} accepts any input value $d$ and returns on its sink end $B$ a timeout signal after a delay of $t$ time units.
 \[
 \begin{split}
     \textbf{con}&:\textbf{Timer}t(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
@@ -305,7 +346,11 @@ The source end of a $t$-timer channal $A-\overset{t}{\circ}\to B$ accepts any in
 \]
 
 \subsubsection{Off-Timer}
-The $t$-timer with the $off$-option $A-$\st{$\circ$}\textcircled{t}$\to B$ allows the timer to be stopped before the expiration of its delay when a special "\textit{off}" value is consumed through its source end.
+The $t$-timer with the $off$-option \tikz[baseline=-0.8ex]{
+    \node[node0, label=left:A] (A) at (0, 0){}; 
+    \node[node0, label=right:B] (B) at (2, 0) {}; 
+    \chanOFFTimert{A}{B}{t}
+} allows the timer to be stopped before the expiration of its delay when a special "\textit{off}" value is consumed through its source end.
 \[
 \begin{split}
     \textbf{con}&:\textbf{OFFTimer}t(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
@@ -323,7 +368,11 @@ where $OFF(\langle\alpha,a\rangle,\langle\beta,b\rangle)\equiv$
 \]
 
 \subsubsection{Reset-Timer}
-The reset-timer $A$\st{$\Lsh$}\textcircled{t}$\to B$ allows the timer to be reset to 0 after it has been activated when a special “reset" value is consumed through its source end.
+The reset-timer \tikz[baseline=-0.8ex]{
+    \node[node0, label=left:A] (A) at (0, 0){}; 
+    \node[node0, label=right:B] (B) at (2, 0) {}; 
+    \chanRSTTimert{A}{B}{t}
+} allows the timer to be reset to 0 after it has been activated when a special “reset" value is consumed through its source end.
 \[
 \begin{split}
     \textbf{con}&:\textbf{RSTTimer}t(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
@@ -334,7 +383,11 @@ The reset-timer $A$\st{$\Lsh$}\textcircled{t}$\to B$ allows the timer to be rese
 where $RT(\langle\alpha,a\rangle,\langle\beta,b\rangle)$ is similar to the definition of $OFF$ except that it changes the prerequisite of the second line into $a(1)<a(0)+t\land\alpha(1)=reset$.
 
 \subsubsection{Expire-Timer}
-The t-timer with early expiration $A$\st{$\Rsh$}\textcircled{t}$\to B$ makes the timer produce its timeout signal through its sink and reset itself when it consumes a special “expire" value through its source end.
+The t-timer with early expiration \tikz[baseline=-0.8ex]{
+    \node[node0, label=left:A] (A) at (0, 0){}; 
+    \node[node0, label=right:B] (B) at (2, 0) {}; 
+    \chanEXPTimert{A}{B}{t}
+} makes the timer produce its timeout signal through its sink and reset itself when it consumes a special “expire" value through its source end.
 \[
 \begin{split}
     \textbf{con}&:\textbf{EXPTimer}t(in:(A\mapsto\langle\alpha,a\rangle);out:(B\mapsto\langle\beta,b\rangle))\\
@@ -478,7 +531,7 @@ To address this predicament, we develop an automatic merging algorithm \verb|aut
 In addition, we upgrade the merger to a multi-merger that can merge more than two input nodes at the same time. The new merger can rearrange the data flows in a chronological order just like the original merger. The implementation of multi-merger can be found at \cite{Z3}. The \verb|automerger| algorithm works well with the multi-merger.
 
 \subsection{Examples of test cases}
-We use test cases to validate the correctness of our method, which can be found at \cite{Z3}. Here we choose three representative examples to show how the system works.
+We use test cases to validate the correctness of our method, which can be found at \cite{Z3}, where we provide various basic, timer, and probabilistic connectors along with their mutants to be tested, and the corresponding graphs are also illustrated. Here we choose three representative examples to show how the system works.
 
 \begin{example} % 1. Basic test case
     Fig.\ref{fig:c1} contains four similar connectors, the purpose of which is to output the data flow simultaneously from two sink nodes with a delay. Graph \verb|b|, \verb|c|, and \verb|d| all complete the task perfectly by using a \textit{SyncDrain} channel to synchronize the two flows or just making the delay happens in the same \textit{FIFO1} channel. However, graph \verb|a| fails to achieve the goal since the node B and C are not constrained to be simultanuous. Hence, \verb|b|, \verb|c|, and \verb|d| are equivlent with each other, and are all refinements of \verb|a|.\par
@@ -486,8 +539,7 @@ We use test cases to validate the correctness of our method, which can be found 
     \begin{verbatim}
 c1 = ['Sync A D', 'Sync D E', 'Sync D F', 'Fifo1 E B', 'Fifo1 F C']
 c2 = ['Sync A D', 'Sync D E', 'Sync D F', 'Fifo1 E G', 'Fifo1 F H',
-      'SyncDrain G H','Sync G B', 'Sync H C']
-    \end{verbatim}
+      'SyncDrain G H','Sync G B', 'Sync H C']\end{verbatim}
     After constructing them into the \verb|Connector| class by the function \verb|automerger|, the result aligns with what we expect: \verb|c1.isRefinementOf(c2, bound)| returns \verb|False| with a counter example, while \verb|c2.isRefinementOf(c1, bound)| returns \verb|True|. The equivalence between \verb|c2|, \verb|c3|, and \verb|c4| can also be verified in the same way.
 \end{example}
 \begin{figure}[htbp]
