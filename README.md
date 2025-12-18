@@ -22,20 +22,33 @@ Running a single experiment, the refinement checking will contain two directions
 - Specification Refines Implementation? (Spec <= Impl)
 
 To be clear, if both directions are `True`, then the connectors are equivalent.\
-To check all the test cases in `test_cases.py`, you can run the following command:
+To check the test cases, you should first change the working directory:
 ```bash
-python main.py --list
-python main.py --all
+cd Models
 ```
-If you only want to check a specific test case in `test_cases.py`, you can run the following command:
+Then you can run the following command to check all the test cases in `test_cases.py`
 ```bash
-python main.py test_basic_01
+python \main.py --list
 ```
-Terminal will return dictionary(s) as the result in the form of
+If you want to check through all the test cases, you can run:
 ```bash
-{'test_basic_01': (spec_list, impl_list), ...}
+python \main.py --all
+```
+If you only want to check a specific test case, for example `test_basic_01`, in `test_cases.py`, you can run the following command:
+```bash
+python \main.py test_basic_01
+```
+Terminal will return the results in the form of
+```bash
+[True]
+```
+or
+```bash
+[False]
+Counter-example
 ```
 ## Visualizing Connectors in LaTeX
 We finished visualizing the connectors in LaTeX using TikZ. The corresponding scripts are in folder `\Visualization`.\
 `tikz_template.tex`: we provide a template for all the connectors defined in `channel.py` in this LaTeX file.
-There are also three examples in this folder, which are showed in the paper.
+`channel_library.tex` and `channel_library.pdf`: we list all the primitive channels including basic, timer, and probability ones.
+`test_cases.tex` and `test_cases.pdf`: we visualize all the test cases we use in the folder `\Models`.
