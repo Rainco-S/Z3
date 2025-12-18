@@ -49,6 +49,6 @@ Counter-example
 ```
 ## Visualizing Connectors in LaTeX
 We finished visualizing the connectors in LaTeX using TikZ. The corresponding scripts are in folder `\Visualization`.\
-`tikz_template.tex`: we provide a template for all the connectors defined in `channel.py` in this LaTeX file.\
-`channel_library.tex` and `channel_library.pdf`: we list all the primitive channels including basic, timer, and probability ones.\
-`test_cases.tex` and `test_cases.pdf`: we visualize all the test cases we use in the folder `\Models`.
+- `tikz_template.tex`: we provide a template for all the connectors defined in `channel.py` in this LaTeX file.\
+- `channel_library.tex` and `channel_library.pdf`: we list all the primitive channels including basic, timer, and probability ones.\
+- `test_cases.tex` and `test_cases.pdf`: we visualize all the test cases we use in the folder `\Models`.
